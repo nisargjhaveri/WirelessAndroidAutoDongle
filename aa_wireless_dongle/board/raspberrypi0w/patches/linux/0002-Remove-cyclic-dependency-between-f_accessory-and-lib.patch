@@ -1,0 +1,116 @@
+From 775e387941fa82d060d9cbb096bcf4edf3561a17 Mon Sep 17 00:00:00 2001
+From: Nisarg Jhaveri <nisargjhaveri@gmail.com>
+Date: Sun, 23 Apr 2023 19:11:43 +0000
+Subject: [PATCH] Remove cyclic dependency between f_accessory and libcomposite
+
+---
+ drivers/usb/gadget/configfs.c             | 21 +++++++++++++-----
+ drivers/usb/gadget/function/f_accessory.c | 27 +++++++++++++++++++----
+ 2 files changed, 39 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+index d3cbcd9cfb50..327d3930ef54 100644
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -16,9 +16,18 @@
+ #include <linux/usb/ch9.h>
+ 
+ #ifdef CONFIG_USB_CONFIGFS_F_ACC
+-extern int acc_ctrlrequest_composite(struct usb_composite_dev *cdev,
+-				const struct usb_ctrlrequest *ctrl);
+-void acc_disconnect(void);
++int (*acc_ctrlrequest_composite)(struct usb_composite_dev *cdev, const struct usb_ctrlrequest *ctrl) = NULL;
++void (*acc_disconnect)(void) = NULL;
++
++void register_acc_handlers(
++	int (*ctrlrequest_handler)(struct usb_composite_dev *cdev, const struct usb_ctrlrequest *ctrl),
++	void (*disconnect_handler)(void)
++) {
++	acc_ctrlrequest_composite = ctrlrequest_handler;
++	acc_disconnect = disconnect_handler;
++}
++EXPORT_SYMBOL_GPL(register_acc_handlers);
++
+ #endif
+ static struct class *android_class;
+ static struct device *android_device;
+@@ -1555,7 +1564,7 @@ static int android_setup(struct usb_gadget *gadget,
+ 	}
+ 
+ #ifdef CONFIG_USB_CONFIGFS_F_ACC
+-	if (value < 0)
++	if (value < 0 && acc_ctrlrequest_composite != NULL)
+ 		value = acc_ctrlrequest_composite(cdev, c);
+ #endif
+ 
+@@ -1617,7 +1626,9 @@ static void configfs_composite_disconnect(struct usb_gadget *gadget)
+ 	 * accessory function is not actually enabled,
+ 	 * so we need to inform it when we are disconnected.
+ 	 */
+-	acc_disconnect();
++	if (acc_disconnect != NULL) {
++		acc_disconnect();
++	}
+ #endif
+ 	gi = container_of(cdev, struct gadget_info, cdev);
+ 	spin_lock_irqsave(&gi->spinlock, flags);
+diff --git a/drivers/usb/gadget/function/f_accessory.c b/drivers/usb/gadget/function/f_accessory.c
+index ce7814c22057..8a0ff683769c 100644
+--- a/drivers/usb/gadget/function/f_accessory.c
++++ b/drivers/usb/gadget/function/f_accessory.c
+@@ -1084,7 +1084,6 @@ int acc_ctrlrequest(struct usb_composite_dev *cdev,
+ 	put_acc_dev(dev);
+ 	return value;
+ }
+-EXPORT_SYMBOL_GPL(acc_ctrlrequest);
+ 
+ int acc_ctrlrequest_composite(struct usb_composite_dev *cdev,
+ 			      const struct usb_ctrlrequest *ctrl)
+@@ -1104,7 +1103,6 @@ int acc_ctrlrequest_composite(struct usb_composite_dev *cdev,
+ 	}
+ 	return acc_ctrlrequest(cdev, ctrl);
+ }
+-EXPORT_SYMBOL_GPL(acc_ctrlrequest_composite);
+ 
+ static int
+ __acc_function_bind(struct usb_configuration *c,
+@@ -1449,7 +1447,6 @@ void acc_disconnect(void)
+ 	kill_all_hid_devices(dev);
+ 	put_acc_dev(dev);
+ }
+-EXPORT_SYMBOL_GPL(acc_disconnect);
+ 
+ static void acc_cleanup(void)
+ {
+@@ -1570,5 +1567,27 @@ static struct usb_function *acc_alloc(struct usb_function_instance *fi)
+ 
+ 	return &dev->function;
+ }
+-DECLARE_USB_FUNCTION_INIT(accessory, acc_alloc_inst, acc_alloc);
++
++extern void register_acc_handlers(
++	int (*ctrlrequest_handler)(struct usb_composite_dev *cdev, const struct usb_ctrlrequest *ctrl),
++	void (*disconnect_handler)(void)
++);
++
++DECLARE_USB_FUNCTION(accessory, acc_alloc_inst, acc_alloc);
++
++static int __init accessory_mod_init(void)
++{
++	register_acc_handlers(acc_ctrlrequest_composite, acc_disconnect);
++	return usb_function_register(&accessoryusb_func);
++}
++
++static void __exit accessory_mod_exit(void)
++{
++	register_acc_handlers(NULL, NULL);
++	usb_function_unregister(&accessoryusb_func);
++}
++
++module_init(accessory_mod_init);
++module_exit(accessory_mod_exit);
++
+ MODULE_LICENSE("GPL");
+-- 
+2.17.1
+

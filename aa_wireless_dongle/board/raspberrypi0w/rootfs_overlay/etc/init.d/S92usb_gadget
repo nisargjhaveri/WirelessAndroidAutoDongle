@@ -1,0 +1,74 @@
+#!/bin/sh
+#
+# Configure USB gadget interfaces
+#
+
+SERIAL_NUMBER="0"
+MANUFACTURER="My Own"
+PRODUCT="AA Wireless Gadget"
+
+ACCESSORY_GADGET_NAME="accessory"
+DEFAULT_GADGET_NAME="default"
+
+
+RETVAL=0
+
+start() {
+	mountpoint -q /sys/kernel/config || mount -t configfs none /sys/kernel/config
+
+	# Get first available UDC, assume only one is available
+	UDC=$(ls -1 /sys/class/udc/ | head -1)
+
+	# Setup accessory config
+	cd /sys/kernel/config/usb_gadget
+	mkdir "$ACCESSORY_GADGET_NAME"
+	cd "$ACCESSORY_GADGET_NAME"
+	echo "0x18D1" > idVendor
+	echo "0x2D00" > idProduct
+	mkdir strings/0x409
+	echo "$SERIAL_NUMBER" > strings/0x409/serialnumber
+	echo "$MANUFACTURER" > strings/0x409/manufacturer
+	echo "$PRODUCT" > strings/0x409/product
+	mkdir functions/accessory.usb0
+	mkdir configs/c.1
+	ln -s functions/accessory.usb0 configs/c.1
+
+	# Setup default config
+	cd /sys/kernel/config/usb_gadget
+	mkdir "$DEFAULT_GADGET_NAME"
+	cd "$DEFAULT_GADGET_NAME"
+	echo "0x1D6B" > idVendor
+	echo "0x0105" > idProduct
+	mkdir strings/0x409
+	echo "$SERIAL_NUMBER" > strings/0x409/serialnumber
+	echo "$MANUFACTURER" > strings/0x409/manufacturer
+	echo "$PRODUCT" > strings/0x409/product
+	mkdir functions/gser.usb0
+	mkdir configs/c.1
+	ln -s functions/gser.usb0 configs/c.1
+	echo $UDC > UDC
+
+	logger -s -p INFO -t usb_gadget Enabled default usb gadget
+}
+
+stop() {
+	cd /sys/kernel/config/usb_gadget
+	echo "" > "$ACCESSORY_GADGET_NAME"/UDC
+	echo "" > "$DEFAULT_GADGET_NAME"/UDC
+
+	logger -s -p INFO -t usb_gadget Disabled usb gadget
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	*)
+		echo "Usage: $0 {start|stop}"
+		;;
+esac
+
+exit $RETVAL
