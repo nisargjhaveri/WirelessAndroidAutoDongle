@@ -1,0 +1,1 @@
+source "$BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH/package/Config.in"

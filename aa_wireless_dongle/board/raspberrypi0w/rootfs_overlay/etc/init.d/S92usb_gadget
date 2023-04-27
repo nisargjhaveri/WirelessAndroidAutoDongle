@@ -5,7 +5,7 @@
 
 SERIAL_NUMBER="0"
 MANUFACTURER="My Own"
-PRODUCT="AA Wireless Gadget"
+PRODUCT="AA Wireless Dongle"
 
 ACCESSORY_GADGET_NAME="accessory"
 DEFAULT_GADGET_NAME="default"

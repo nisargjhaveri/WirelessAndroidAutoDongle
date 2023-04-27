@@ -1,0 +1,4 @@
+config BR2_PACKAGE_AAWG
+	bool "aawg"
+	help
+	  Android Auto Wireless Gateway Daemon
