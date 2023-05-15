@@ -1,3 +1,4 @@
 menu "Packages"
     source "$BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH/package/python-pydbus/Config.in"
+    source "$BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH/package/aawg/Config.in"
 endmenu
