@@ -1,0 +1,28 @@
+syntax = "proto2";
+option optimize_for = LITE_RUNTIME;
+
+enum AccessPointType {
+    STATIC = 0;
+    DYNAMIC = 1;
+}
+
+enum SecurityMode {
+    UNKNOWN_SECURITY_MODE = 0;
+    OPEN = 1;
+    WEP_64 = 2;
+    WEP_128 = 3;
+    WPA_PERSONAL = 4;
+    WPA2_PERSONAL = 8;
+    WPA_WPA2_PERSONAL = 12;
+    WPA_ENTERPRISE = 20;
+    WPA2_ENTERPRISE = 24;
+    WPA_WPA2_ENTERPRISE = 28;
+}
+
+message WifiInfoRequest {
+    required string ssid = 1;
+    required string key = 2;
+    required string bssid = 3;
+    required SecurityMode security_mode = 4;
+    required AccessPointType access_point_type = 5;
+}
