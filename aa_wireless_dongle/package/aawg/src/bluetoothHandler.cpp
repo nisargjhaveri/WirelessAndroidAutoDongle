@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "bluetoothHandler.h"
+#include "bluetoothProfiles.h"
 
 static constexpr const char* ADAPTER_ALIAS = "AA Wireless Gateway Dongle";
 
@@ -11,7 +12,6 @@ static constexpr const char* BLUEZ_OBJECT_PATH = "/org/bluez";
 static constexpr const char* INTERFACE_BLUEZ_ADAPTER = "org.bluez.Adapter1";
 static constexpr const char* INTERFACE_BLUEZ_DEVICE = "org.bluez.Device1";
 static constexpr const char* INTERFACE_BLUEZ_PROFILE_MANAGER = "org.bluez.ProfileManager1";
-static constexpr const char* INTERFACE_BLUEZ_PROFILE = "org.bluez.Profile1";
 
 static constexpr const char* AAWG_PROFILE_OBJECT_PATH = "/com/aawgd/bluetooth/aawg";
 static constexpr const char* AAWG_PROfILE_UUID = "4de17a00-52cb-11e6-bdf4-0800200c9a66";
@@ -39,66 +39,6 @@ public:
     std::shared_ptr<DBus::PropertyProxy<bool>> powered;
     std::shared_ptr<DBus::PropertyProxy<bool>> discoverable;
     std::shared_ptr<DBus::PropertyProxy<bool>> pairable;
-};
-
-
-class BluezProfile: public DBus::Object {
-    virtual void Release() = 0;
-    virtual void NewConnection(DBus::Path path, std::shared_ptr<DBus::FileDescriptor> fd, DBus::Properties fdProperties) = 0;
-    virtual void RequestDisconnection(DBus::Path path) = 0;
-
-protected:
-    BluezProfile(DBus::Path path): DBus::Object(path) {
-        this->create_method<void(void)>(INTERFACE_BLUEZ_PROFILE, "Release", sigc::mem_fun(*this, &BluezProfile::Release));
-        this->create_method<void(DBus::Path, std::shared_ptr<DBus::FileDescriptor>, DBus::Properties)>(INTERFACE_BLUEZ_PROFILE ,"NewConnection", sigc::mem_fun(*this, &BluezProfile::NewConnection));
-        this->create_method<void(DBus::Path)>(INTERFACE_BLUEZ_PROFILE, "RequestDisconnection", sigc::mem_fun(*this, &BluezProfile::RequestDisconnection));
-    }
-};
-
-class AAWirelessProfile: public BluezProfile {
-    void Release() override {
-        printf("AA Wireless Release\n");
-    }
-
-    void NewConnection(DBus::Path path, std::shared_ptr<DBus::FileDescriptor> fd, DBus::Properties fdProperties) override {
-        printf("AA Wireless NewConnection\n");
-        printf("Path: %s, fd: %d\n", path.c_str(), fd->descriptor());
-    }
-
-    void RequestDisconnection(DBus::Path path) override {
-        printf("AA Wireless RequestDisconnection\n");
-        printf("Path: %s\n", path.c_str());
-    }
-
-    AAWirelessProfile(DBus::Path path): BluezProfile(path) {};
-
-public:
-    static std::shared_ptr<AAWirelessProfile> create(DBus::Path path) {
-        return std::shared_ptr<AAWirelessProfile>(new AAWirelessProfile(path));
-    }
-};
-
-class HSPHSProfile: public BluezProfile {
-    void Release() override {
-        printf("HSP HS Release\n");
-    }
-
-    void NewConnection(DBus::Path path, std::shared_ptr<DBus::FileDescriptor> fd, DBus::Properties fdProperties) override {
-        printf("HSP HS NewConnection\n");
-        printf("Path: %s, fd: %d\n", path.c_str(), fd->descriptor());
-    }
-
-    void RequestDisconnection(DBus::Path path) override {
-        printf("HSP HS RequestDisconnection\n");
-        printf("Path: %s\n", path.c_str());
-    }
-
-    HSPHSProfile(DBus::Path path): BluezProfile(path) {};
-
-public:
-    static std::shared_ptr<HSPHSProfile> create(DBus::Path path) {
-        return std::shared_ptr<HSPHSProfile>(new HSPHSProfile(path));
-    }
 };
 
 

@@ -2,7 +2,7 @@
 
 EXTRA_CXXFLAGS += $(shell $(PKG_CONFIG) --cflags --libs dbus-cxx-2.0 protobuf-lite)
 
-aawgd: aawgd.o bluetoothHandler.o proto/WifiInfoRequest.pb.o proto/WifiStartRequest.pb.o
+aawgd: aawgd.o bluetoothHandler.o bluetoothProfiles.o proto/WifiInfoRequest.pb.o proto/WifiStartRequest.pb.o
 	$(CXX) $(CXXFLAGS) $(EXTRA_CXXFLAGS) -o '$@' $^
 
 %.o: %.cpp *.h proto/*.h
