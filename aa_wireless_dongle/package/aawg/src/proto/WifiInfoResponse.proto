@@ -19,7 +19,7 @@ enum SecurityMode {
     WPA_WPA2_ENTERPRISE = 28;
 }
 
-message WifiInfoRequest {
+message WifiInfoResponse {
     required string ssid = 1;
     required string key = 2;
     required string bssid = 3;
