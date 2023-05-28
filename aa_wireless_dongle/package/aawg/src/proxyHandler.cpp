@@ -91,7 +91,7 @@ void AAWProxy::handleClient(int server_sock) {
     printf("Forwarding stopped\n");
 }
 
-std::optional<std::thread> AAWProxy::startServer() {
+std::optional<std::thread> AAWProxy::startServer(int32_t port) {
     printf("Starting tcp server\n");
     int server_sock;
     if ((server_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -108,7 +108,7 @@ std::optional<std::thread> AAWProxy::startServer() {
     struct sockaddr_in address;
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(5288);
+    address.sin_port = htons(port);
 
     if (bind(server_sock, (struct sockaddr*)&address, sizeof(address)) < 0) {
         printf("bind failed: %s\n", strerror(errno));
@@ -120,7 +120,7 @@ std::optional<std::thread> AAWProxy::startServer() {
         return std::nullopt;
     }
 
-    printf("Tcp server listening\n");
+    printf("Tcp server listening on %d\n", port);
 
     return std::thread(&AAWProxy::handleClient, this, server_sock);
 }

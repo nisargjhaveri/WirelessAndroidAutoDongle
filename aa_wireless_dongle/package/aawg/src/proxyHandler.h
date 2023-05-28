@@ -6,7 +6,7 @@
 
 class AAWProxy {
 public:
-    std::optional<std::thread> startServer();
+    std::optional<std::thread> startServer(int32_t port);
 
 private:
     enum class ProxyDirection {
