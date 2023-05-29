@@ -26,4 +26,6 @@ private:
 
     int32_t getenv(std::string name, int32_t defaultValue);
     std::string getenv(std::string name, std::string defaultValue);
+
+    std::string getMacAddress(std::string interface);
 };

@@ -1,4 +1,6 @@
 #include <cstdlib>
+#include <sstream>
+#include <fstream>
 #include "common.h"
 
 #include "proto/WifiInfoResponse.pb.h"
@@ -23,11 +25,20 @@ std::string Config::getenv(std::string name, std::string defaultValue) {
     return envValue != nullptr ? envValue : defaultValue;
 }
 
+std::string Config::getMacAddress(std::string interface) {
+    std::ifstream addressFile("/sys/class/net/" + interface + "/address");
+
+    std::string macAddress;
+    getline(addressFile, macAddress);
+
+    return macAddress;
+}
+
 WifiInfo Config::getWifiInfo() {
     return {
         getenv("AAWG_WIFI_SSID", "AAWirelessGateway"),
         getenv("AAWG_WIFI_PASSWORD", "ConnectAAWirelessGateway"),
-        getenv("AAWG_WIFI_BSSID", "00:00:00:00:00:00"),
+        getenv("AAWG_WIFI_BSSID", getMacAddress("wlan0")),
         SecurityMode::WPA2_PERSONAL,
         AccessPointType::DYNAMIC,
         getenv("AAWG_PROXY_IP_ADDRESS", "10.0.0.1"),

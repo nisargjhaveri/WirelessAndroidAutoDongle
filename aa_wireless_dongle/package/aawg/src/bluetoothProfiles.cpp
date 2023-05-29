@@ -35,7 +35,7 @@ public:
 
         WifiInfo wifiInfo = Config::instance()->getWifiInfo();
 
-        printf("Sending WifiStartRequest\n");
+        printf("Sending WifiStartRequest (ip: %s, port: %d)\n", wifiInfo.ipAddress.c_str(), wifiInfo.port);
         WifiStartRequest wifiStartRequest;
         wifiStartRequest.set_ip_address(wifiInfo.ipAddress);
         wifiStartRequest.set_port(wifiInfo.port);
@@ -49,7 +49,7 @@ public:
             return;
         }
 
-        printf("Sending WifiInfoResponse\n");
+        printf("Sending WifiInfoResponse (ssid: %s, bssid: %s)\n", wifiInfo.ssid.c_str(), wifiInfo.bssid.c_str());
         WifiInfoResponse wifiInfoResponse;
         wifiInfoResponse.set_ssid(wifiInfo.ssid);
         wifiInfoResponse.set_key(wifiInfo.key);
