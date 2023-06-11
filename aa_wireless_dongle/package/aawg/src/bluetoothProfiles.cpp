@@ -35,7 +35,7 @@ public:
 
         WifiInfo wifiInfo = Config::instance()->getWifiInfo();
 
-        printf("Sending WifiStartRequest (ip: %s, port: %d)\n", wifiInfo.ipAddress.c_str(), wifiInfo.port);
+        Logger::instance()->info("Sending WifiStartRequest (ip: %s, port: %d)\n", wifiInfo.ipAddress.c_str(), wifiInfo.port);
         WifiStartRequest wifiStartRequest;
         wifiStartRequest.set_ip_address(wifiInfo.ipAddress);
         wifiStartRequest.set_port(wifiInfo.port);
@@ -45,11 +45,11 @@ public:
         MessageId messageId = ReadMessage();
 
         if (messageId != MessageId::WifiInfoRequest) {
-            printf("Expected WifiInfoRequest, got %s (%d). Abort.\n", MessageName(messageId), messageId);
+            Logger::instance()->info("Expected WifiInfoRequest, got %s (%d). Abort.\n", MessageName(messageId), messageId);
             return;
         }
 
-        printf("Sending WifiInfoResponse (ssid: %s, bssid: %s)\n", wifiInfo.ssid.c_str(), wifiInfo.bssid.c_str());
+        Logger::instance()->info("Sending WifiInfoResponse (ssid: %s, bssid: %s)\n", wifiInfo.ssid.c_str(), wifiInfo.bssid.c_str());
         WifiInfoResponse wifiInfoResponse;
         wifiInfoResponse.set_ssid(wifiInfo.ssid);
         wifiInfoResponse.set_key(wifiInfo.key);
@@ -112,10 +112,10 @@ private:
 
         ssize_t wrote = write(m_fd, buffer, length);
         if (wrote < 0) {
-            printf("Error sending %s, messageId: %d\n", MessageName(messageId).c_str(), messageId);
+            Logger::instance()->info("Error sending %s, messageId: %d\n", MessageName(messageId).c_str(), messageId);
         }
         else {
-            printf("Sent %s, messageId: %d, wrote %d bytes\n", MessageName(messageId).c_str(), messageId, wrote);
+            Logger::instance()->info("Sent %s, messageId: %d, wrote %d bytes\n", MessageName(messageId).c_str(), messageId, wrote);
         }
 
         delete buffer;
@@ -128,7 +128,7 @@ private:
         readBytes = read(m_fd, &networkShort, 2);
         if (readBytes != 2) {
             // Could not read 2 bytes. Do something.
-            printf("Error reading length, read bytes: %d, errno: %s\n", readBytes, strerror(errno));
+            Logger::instance()->info("Error reading length, read bytes: %d, errno: %s\n", readBytes, strerror(errno));
             return MessageId::Invalid;
         }
         uint16_t length = ntohs(networkShort);
@@ -136,12 +136,12 @@ private:
         readBytes = read(m_fd, &networkShort, 2);
         if (readBytes != 2) {
             // Could not read 2 bytes. Do something.
-            printf("Error reading message id, read bytes: %d, errno: %s\n", readBytes, strerror(errno));
+            Logger::instance()->info("Error reading message id, read bytes: %d, errno: %s\n", readBytes, strerror(errno));
             return MessageId::Invalid;
         }
         MessageId messageId = static_cast<MessageId>(ntohs(networkShort));
 
-        printf("Read %s. length: %d, messageId: %d\n", MessageName(messageId).c_str(), length, messageId);
+        Logger::instance()->info("Read %s. length: %d, messageId: %d\n", MessageName(messageId).c_str(), length, messageId);
         
         unsigned char* buffer = new unsigned char[length];
         readBytes = read(m_fd, buffer, length);
@@ -157,20 +157,20 @@ private:
 
 #pragma region AAWirelessProfile
 void AAWirelessProfile::Release() {
-    printf("AA Wireless Release\n");
+    Logger::instance()->info("AA Wireless Release\n");
 }
 
 void AAWirelessProfile::NewConnection(DBus::Path path, std::shared_ptr<DBus::FileDescriptor> fd, DBus::Properties fdProperties) {
-    printf("AA Wireless NewConnection\n");
-    printf("Path: %s, fd: %d\n", path.c_str(), fd->descriptor());
+    Logger::instance()->info("AA Wireless NewConnection\n");
+    Logger::instance()->info("Path: %s, fd: %d\n", path.c_str(), fd->descriptor());
 
     AAWirelessLauncher(fd->descriptor()).launch();
-    printf("Bluetooth launch sequence completed\n");
+    Logger::instance()->info("Bluetooth launch sequence completed\n");
 }
 
 void AAWirelessProfile::RequestDisconnection(DBus::Path path) {
-    printf("AA Wireless RequestDisconnection\n");
-    printf("Path: %s\n", path.c_str());
+    Logger::instance()->info("AA Wireless RequestDisconnection\n");
+    Logger::instance()->info("Path: %s\n", path.c_str());
 }
 
 AAWirelessProfile::AAWirelessProfile(DBus::Path path): BluezProfile(path) {};
@@ -182,17 +182,17 @@ AAWirelessProfile::AAWirelessProfile(DBus::Path path): BluezProfile(path) {};
 
 #pragma region HSPHSProfile
 void HSPHSProfile::Release() {
-    printf("HSP HS Release\n");
+    Logger::instance()->info("HSP HS Release\n");
 }
 
 void HSPHSProfile::NewConnection(DBus::Path path, std::shared_ptr<DBus::FileDescriptor> fd, DBus::Properties fdProperties) {
-    printf("HSP HS NewConnection\n");
-    printf("Path: %s, fd: %d\n", path.c_str(), fd->descriptor());
+    Logger::instance()->info("HSP HS NewConnection\n");
+    Logger::instance()->info("Path: %s, fd: %d\n", path.c_str(), fd->descriptor());
 }
 
 void HSPHSProfile::RequestDisconnection(DBus::Path path) {
-    printf("HSP HS RequestDisconnection\n");
-    printf("Path: %s\n", path.c_str());
+    Logger::instance()->info("HSP HS RequestDisconnection\n");
+    Logger::instance()->info("Path: %s\n", path.c_str());
 }
 
 HSPHSProfile::HSPHSProfile(DBus::Path path): BluezProfile(path) {};

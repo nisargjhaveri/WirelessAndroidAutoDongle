@@ -6,7 +6,7 @@
 #include "proxyHandler.h"
 
 int main(void) {
-    printf("AA Wireless Dongle\n");
+    Logger::instance()->info("AA Wireless Dongle\n");
 
     AAWProxy proxy;
     std::optional<std::thread> proxyThread = proxy.startServer(Config::instance()->getWifiInfo().port);

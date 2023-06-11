@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "common.h"
 #include "bluetoothHandler.h"
 #include "bluetoothProfiles.h"
 
@@ -57,7 +58,7 @@ void BluetoothHandler::initAdapter() {
         for (auto const& [interface, properties]: interfaces) {
             if (interface == INTERFACE_BLUEZ_ADAPTER) {
                 adapter_path = path;
-                printf("Using bluetooth adapter at path: %s\n", path.c_str());
+                Logger::instance()->info("Using bluetooth adapter at path: %s\n", path.c_str());
                 break;
             }
         }
@@ -67,7 +68,7 @@ void BluetoothHandler::initAdapter() {
     }
 
     if (adapter_path.empty()) {
-        printf("Did not find any bluetooth adapters\n");
+        Logger::instance()->info("Did not find any bluetooth adapters\n");
     }
     else {
         m_adapter = BluezAdapterProxy::create(m_connection, adapter_path);
@@ -81,7 +82,7 @@ void BluetoothHandler::powerOn() {
 
     m_adapter->alias->set_value(ADAPTER_ALIAS);
     m_adapter->powered->set_value(true);
-    printf("Bluetooth adapter was Powered On\n");
+    Logger::instance()->info("Bluetooth adapter was Powered On\n");
 }
 
 void BluetoothHandler::setPairable(bool pairable) {
@@ -91,7 +92,7 @@ void BluetoothHandler::setPairable(bool pairable) {
 
     m_adapter->discoverable->set_value(pairable);
     m_adapter->pairable->set_value(pairable);
-    printf("Bluetooth adapter is now discoverable and pairable\n");
+    Logger::instance()->info("Bluetooth adapter is now discoverable and pairable\n");
 }
 
 void BluetoothHandler::exportProfiles() {
@@ -101,7 +102,7 @@ void BluetoothHandler::exportProfiles() {
     // Register AA Wireless Profile
     m_aawProfile = AAWirelessProfile::create(AAWG_PROFILE_OBJECT_PATH);
     if (m_connection->register_object(m_aawProfile, DBus::ThreadForCalling::DispatcherThread) != DBus::RegistrationStatus::Success) {
-        printf("Failed to register AA Wireless profile\n");
+        Logger::instance()->info("Failed to register AA Wireless profile\n");
     }
 
     registerProfile(AAWG_PROFILE_OBJECT_PATH, AAWG_PROfILE_UUID, {
@@ -109,17 +110,17 @@ void BluetoothHandler::exportProfiles() {
         {"Role", DBus::Variant("server")},
         {"Channel", DBus::Variant(uint16_t(8))},
     });
-    printf("Bluetooth AA Wireless profile active\n");
+    Logger::instance()->info("Bluetooth AA Wireless profile active\n");
 
     // Register HSP Handset profile
     m_hspProfile = HSPHSProfile::create(HSP_HS_PROFILE_OBJECT_PATH);
     if (m_connection->register_object(m_hspProfile, DBus::ThreadForCalling::DispatcherThread) != DBus::RegistrationStatus::Success) {
-        printf("Failed to register HSP Handset profile\n");
+        Logger::instance()->info("Failed to register HSP Handset profile\n");
     }
     registerProfile(HSP_HS_PROFILE_OBJECT_PATH, HSP_HS_UUID, {
         {"Name", DBus::Variant("HSP HS")},
     });
-    printf("HSP Handset profile active\n");
+    Logger::instance()->info("HSP Handset profile active\n");
 }
 
 void BluetoothHandler::connectDevice() {
@@ -135,20 +136,20 @@ void BluetoothHandler::connectDevice() {
     }
 
     if (!device_paths.size()) {
-        printf("Did not find any connected bluetooth device\n");
+        Logger::instance()->info("Did not find any connected bluetooth device\n");
         return;
     }
 
     std::string device_path;
-    printf("Found %d bluetooth devices\n", device_paths.size());
+    Logger::instance()->info("Found %d bluetooth devices\n", device_paths.size());
     device_path = device_paths[0];
-    printf("Using bluetooth device at path: %s\n", device_path.c_str());
+    Logger::instance()->info("Using bluetooth device at path: %s\n", device_path.c_str());
 
     std::shared_ptr<DBus::ObjectProxy> bluezDevice = m_connection->create_object_proxy(BLUEZ_BUS_NAME, device_path);
     DBus::MethodProxy connectProfile = *(bluezDevice->create_method<void(std::string)>(INTERFACE_BLUEZ_DEVICE, "ConnectProfile"));
 
     connectProfile(HSP_AG_UUID);
-    printf("Bluetooth connected to the device\n");
+    Logger::instance()->info("Bluetooth connected to the device\n");
 }
 
 void BluetoothHandler::init() {
@@ -158,7 +159,7 @@ void BluetoothHandler::init() {
     m_dispatcher = DBus::StandaloneDispatcher::create();
     m_connection = m_dispatcher->create_connection( DBus::BusType::SYSTEM );
 
-    printf("Unique Name: %s\n", m_connection->unique_name().c_str());
+    Logger::instance()->info("Unique Name: %s\n", m_connection->unique_name().c_str());
 
     initAdapter();
     exportProfiles();

@@ -29,3 +29,13 @@ private:
 
     std::string getMacAddress(std::string interface);
 };
+
+class Logger {
+public:
+    static Logger* instance();
+
+    void info(const char *format, ...);
+private:
+    Logger();
+    ~Logger();
+};

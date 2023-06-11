@@ -1,10 +1,13 @@
 #include <cstdlib>
+#include <cstdarg>
 #include <sstream>
 #include <fstream>
-#include "common.h"
+#include <syslog.h>
 
+#include "common.h"
 #include "proto/WifiInfoResponse.pb.h"
 
+#pragma region Config
 /*static*/ Config* Config::instance() {
     static Config s_instance;
     return &s_instance;
@@ -45,3 +48,26 @@ WifiInfo Config::getWifiInfo() {
         getenv("AAWG_PROXY_PORT", 5288),
     };
 }
+#pragma endregion Config
+
+#pragma region Logger
+/*static*/ Logger* Logger::instance() {
+    static Logger s_instance;
+    return &s_instance;
+}
+
+Logger::Logger() {
+    openlog(nullptr, LOG_PERROR | LOG_PID, LOG_USER);
+}
+
+Logger::~Logger() {
+    closelog();
+}
+
+void Logger::info(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    vsyslog(LOG_INFO, format, args);
+    va_end(args);
+}
+#pragma endregion Logger
