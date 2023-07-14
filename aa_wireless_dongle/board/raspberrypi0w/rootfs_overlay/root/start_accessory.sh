@@ -10,4 +10,5 @@ if [ "$UDC" != "" -a "$DEVNAME" = "usb_accessory" -a "$ACCESSORY" = "START" ]; t
     echo "" > default/UDC
     echo "$UDC" > accessory/UDC
     logger -s -p INFO -t start_accessory START: Switched to accessory gadget from default
+    aawgd > /var/log/aawgd.log
 fi
