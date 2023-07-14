@@ -1,0 +1,1 @@
+ls -1 /sys/class/udc/ | head -1 > /sys/kernel/config/usb_gadget/default/UDC
