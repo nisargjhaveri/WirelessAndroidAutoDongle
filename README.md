@@ -13,7 +13,8 @@ $ vagrant ssh
 ```
 $ git clone --recurse-submodules <repository-url>
 $ cd AAWirelessGatewayDongle/buildroot
-$ make BR2_EXTERNAL=../aa_wireless_dongle/ list-defconfigs
-$ make raspberrypi0w_defconfig
+$ make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi0w list-defconfigs
+$ make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi0w raspberrypi0w_defconfig
+$ cd output/rpi0w
 $ make
 ```
