@@ -31,6 +31,7 @@ start() {
 	echo "$PRODUCT" > strings/0x409/product
 	mkdir functions/accessory.usb0
 	mkdir configs/c.1
+	echo 500 > configs/c.1/MaxPower
 	ln -s functions/accessory.usb0 configs/c.1
 
 	# Setup default config
@@ -45,6 +46,7 @@ start() {
 	echo "$PRODUCT" > strings/0x409/product
 	mkdir functions/gser.usb0
 	mkdir configs/c.1
+	echo 500 > configs/c.1/MaxPower
 	ln -s functions/gser.usb0 configs/c.1
 	echo $UDC > UDC
 
