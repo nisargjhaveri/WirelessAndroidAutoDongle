@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Mange Android Accessory events and lifecycle
+# Register bluetooth agent for non-interactive connection
 #
 
 DAEMON="bt-agent"
