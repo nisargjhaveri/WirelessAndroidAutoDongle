@@ -4,7 +4,7 @@
 #include "bluetoothHandler.h"
 #include "bluetoothProfiles.h"
 
-static constexpr const char* ADAPTER_ALIAS = "AA Wireless Gateway Dongle";
+static constexpr const char* ADAPTER_ALIAS = "AA Wireless Dongle";
 
 static constexpr const char* BLUEZ_BUS_NAME = "org.bluez";
 static constexpr const char* BLUEZ_ROOT_OBJECT_PATH = "/";
