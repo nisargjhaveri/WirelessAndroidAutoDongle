@@ -1,13 +1,13 @@
 auto lo
 iface lo inet loopback
 
-auto eth0
-iface eth0 inet dhcp
-  hostname $(hostname)
+#auto eth0
+#iface eth0 inet dhcp
+#  hostname $(hostname)
 
-auto usb0
-iface usb0 inet dhcp
-  hostname $(hostname)
+#auto usb0
+#iface usb0 inet dhcp
+#  hostname $(hostname)
 
 auto wlan0
 iface wlan0 inet static
