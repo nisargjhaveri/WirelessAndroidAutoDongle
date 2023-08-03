@@ -13,15 +13,62 @@
 #include "common.h"
 #include "proxyHandler.h"
 
+ssize_t AAWProxy::readFully(int fd, unsigned char *buffer, size_t nbyte) {
+    size_t remaining_bytes = nbyte;
+    while (remaining_bytes > 0) {
+        ssize_t len = read(fd, buffer, remaining_bytes);
+
+        if (len <= 0) {
+            // Error, cannot read more.
+            return len;
+        }
+
+        buffer += len;
+        remaining_bytes -= len;
+    }
+
+    return nbyte;
+}
+
+ssize_t AAWProxy::readMessage(int fd, unsigned char *buffer, size_t buffer_len) {
+    size_t header_length = 4;
+    if (ssize_t len = readFully(fd, buffer, header_length); len <= 0) {
+        return len;
+    }
+
+    size_t message_length = (buffer[2] << 8) + buffer[3];
+
+    constexpr char FRAME_TYPE_FIRST = 1 << 0;
+    constexpr char FRAME_TYPE_LAST = 1 << 1;
+    constexpr char FRAME_TYPE_MASK = FRAME_TYPE_FIRST | FRAME_TYPE_LAST;
+    if ((buffer[1] & FRAME_TYPE_MASK) == FRAME_TYPE_FIRST) { // This means the header is 8 bytes long, we need to read four more bytes.
+        message_length += 4;
+    }
+
+    if ((header_length + message_length) > buffer_len) {
+        // Not enough space in the buffer. This is unexpected.
+        errno = EMSGSIZE;
+        return -1;
+    }
+
+    if (ssize_t len = readFully(fd, buffer + header_length, message_length); len <= 0) {
+        return len;
+    }
+
+    return header_length + message_length;
+}
 
 void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit) {
     size_t buffer_len = 16384;
     unsigned char buffer[buffer_len];
 
+    bool read_message;
     int read_fd, write_fd;
     std::string read_name, write_name;
     switch (direction) {
         case ProxyDirection::TCP_to_USB:
+            read_message = true;
+
             read_fd = m_tcp_fd;
             read_name = "TCP";
 
@@ -29,6 +76,8 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
             write_name = "USB";
             break;
         case ProxyDirection::USB_to_TCP:
+            read_message = false;
+
             read_fd = m_usb_fd;
             read_name = "USB";
 
@@ -38,7 +87,7 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
     }
 
     while (!should_exit) {
-        ssize_t len = read(read_fd, buffer, buffer_len);
+        ssize_t len = read_message ? readMessage(read_fd, buffer, buffer_len) : read(read_fd, buffer, buffer_len);
         Logger::instance()->info("%d bytes read from %s\n", len, read_name.c_str());
         if (len < 0) {
             Logger::instance()->info("Read from %s failed: %s\n", read_name.c_str(), strerror(errno));
