@@ -1,5 +1,9 @@
 kernel=zImage
 
+disable_splash=1
+boot_delay=0
+disable_poe_fan=1
+
 # To use an external initramfs file
 #initramfs rootfs.cpio.gz
 
