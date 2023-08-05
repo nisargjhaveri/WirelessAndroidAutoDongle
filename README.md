@@ -35,6 +35,8 @@ $ cd output/rpi0w
 $ make
 ```
 
+You may want to update the `country_code` in the relavent `hostapd.conf` file for your board. See [/board/common/rootfs_overlay/etc/hostapd.conf](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf) and other board specific overrides.
+
 Use one of the following defconfig for the board you intend to use:
 - `raspberrypi0w_defconfig` - Raspberry Pi Zero W
 - `raspberrypizero2w_defconfig` - Raspberry Pi Zero 2 W
