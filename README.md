@@ -20,7 +20,7 @@ Currently tested with multiple Raspberry Pi boards supporting USB OTG.
 
 ## Build
 ### Start the vagrant box
-```
+```shell
 $ git clone https://github.com/nisargjhaveri/AAWirelessDongle
 $ vagrant up
 $ vagrant ssh
@@ -41,13 +41,13 @@ Use one of the following defconfig for the board you intend to use:
 - `raspberrypi4_defconfig` - Raspberry Pi 4
 
 ## Install and run
-Build should generate the sd card image at `images/sdcard.img` in your output directory.  Install this image on the SD card using your favourite tool.
+Build should generate the sd card image at `images/sdcard.img` in your output directory. Install this image on the SD card using your favourite tool.
 
 That should be it. Insert the SD card and connect the board to the car. Make sure to use a data cable, with the USB OTG enabled port.
 
-On your phone, open Bluetooth settings and pair a new device called "AA Wireless Dongle". Once pair, it should automatically start the Wireless Android Auto on the car screen.
+On your phone, open Bluetooth settings and pair a new device called "AA Wireless Dongle". Once paired, it should automatically start the Wireless Android Auto on the car screen.
 
-From the next time, it should automatically connect to your phone, no need to pair again. Make sure your Bluetooth and Wifi and enabled on the phone.
+From the next time, it should automatically connect to your phone, no need to pair again. Make sure your Bluetooth and Wifi are enabled on the phone.
 
 ## Limitations
-- Tested with very limited set of headunits and cars. Let me know if it does not work in your car.
+- Tested with very limited set of headunits and cars. Let me know if it does not work with your headunit.
