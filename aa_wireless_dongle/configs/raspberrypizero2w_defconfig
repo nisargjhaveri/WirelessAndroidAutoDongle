@@ -59,6 +59,7 @@ BR2_PACKAGE_AAWG=y
 
 # Other options
 BR2_TARGET_GENERIC_ROOT_PASSWD="password"
+# BR2_TARGET_GENERIC_GETTY is not set
 
 # Filesystem / image
 BR2_TARGET_ROOTFS_EXT2=y
