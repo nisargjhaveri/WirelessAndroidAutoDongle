@@ -5,6 +5,13 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        defconfig:
+        - raspberrypi0w
+        - raspberrypizero2w
+        - raspberrypi4
+
     runs-on: ubuntu-latest
 
     steps:
@@ -13,9 +20,18 @@ jobs:
         submodules: recursive
 
     - name: Setup config
-      run: make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpizero2w raspberrypizero2w_defconfig
+      run: make BR2_EXTERNAL=../aa_wireless_dongle/ ${{ matrix.defconfig }}_defconfig
       working-directory: ./buildroot
 
     - name: Build
       run: make
-      working-directory: ./buildroot/output/rpizero2w
+      working-directory: ./buildroot
+
+    - name: Compress sdcard.img
+      run: xz -c sdcard.img > ${{ matrix.defconfig }}-sdcard.img.xz
+      working-directory: ./buildroot/output/images
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: AAWirelessDongle-${{ matrix.defconfig }}
+        path: ./buildroot/output/images/${{ matrix.defconfig }}-sdcard.img.xz
