@@ -1,0 +1,21 @@
+name: Makefile CI
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Setup config
+      run: make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpizero2w raspberrypizero2w_defconfig
+      working-directory: ./buildroot
+
+    - name: Build
+      run: make
+      working-directory: ./buildroot/output/rpizero2w
