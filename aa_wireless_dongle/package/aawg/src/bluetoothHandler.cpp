@@ -140,16 +140,25 @@ void BluetoothHandler::connectDevice() {
         return;
     }
 
-    std::string device_path;
     Logger::instance()->info("Found %d bluetooth devices\n", device_paths.size());
-    device_path = device_paths[0];
-    Logger::instance()->info("Using bluetooth device at path: %s\n", device_path.c_str());
 
-    std::shared_ptr<DBus::ObjectProxy> bluezDevice = m_connection->create_object_proxy(BLUEZ_BUS_NAME, device_path);
-    DBus::MethodProxy connectProfile = *(bluezDevice->create_method<void(std::string)>(INTERFACE_BLUEZ_DEVICE, "ConnectProfile"));
+    for (const std::string &device_path: device_paths) {
+        Logger::instance()->info("Trying to connect bluetooth device at path: %s\n", device_path.c_str());
 
-    connectProfile(HSP_AG_UUID);
-    Logger::instance()->info("Bluetooth connected to the device\n");
+        std::shared_ptr<DBus::ObjectProxy> bluezDevice = m_connection->create_object_proxy(BLUEZ_BUS_NAME, device_path);
+        DBus::MethodProxy connectProfile = *(bluezDevice->create_method<void(std::string)>(INTERFACE_BLUEZ_DEVICE, "ConnectProfile"));
+
+        try {
+            connectProfile(HSP_AG_UUID);
+            Logger::instance()->info("Bluetooth connected to the device\n");
+            return;
+        } catch (DBus::Error& e) {
+            Logger::instance()->info("Failed to connect device at path: %s\n", device_path.c_str());
+        }
+    }
+
+    Logger::instance()->info("Failed to connect to any known bluetooth device\n");
+
 }
 
 void BluetoothHandler::init() {
