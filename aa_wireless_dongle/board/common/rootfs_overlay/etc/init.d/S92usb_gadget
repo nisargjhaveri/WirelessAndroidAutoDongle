@@ -10,6 +10,9 @@ PRODUCT="AA Wireless Dongle"
 ACCESSORY_GADGET_NAME="accessory"
 DEFAULT_GADGET_NAME="default"
 
+FUNCTIONFS_PATH=/dev/ffs-mtp
+DAEMON=umtprd
+PIDFILE="/var/run/$DAEMON.pid"
 
 RETVAL=0
 
@@ -47,11 +50,20 @@ start() {
 		echo "$SERIAL_NUMBER" > strings/0x409/serialnumber
 		echo "$MANUFACTURER" > strings/0x409/manufacturer
 		echo "$PRODUCT" > strings/0x409/product
-		mkdir functions/gser.usb0
+		mkdir functions/ffs.mtp
 		mkdir configs/c.1
 		echo 500 > configs/c.1/MaxPower
-		ln -s functions/gser.usb0 configs/c.1
+		ln -s functions/ffs.mtp configs/c.1
 	fi
+
+	# Mount FunctionFS and start uMTPrd
+    if [ ! -f "$FUNCTIONFS_PATH" ]; then
+        mkdir "$FUNCTIONFS_PATH"
+    fi
+    mount -t functionfs mtp "$FUNCTIONFS_PATH"
+    start-stop-daemon -S -b -q -m -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
+    RETVAL=$?
+	sleep 1
 
 	# Enable default
 	echo $UDC > "/sys/kernel/config/usb_gadget/$DEFAULT_GADGET_NAME/UDC"
@@ -63,6 +75,11 @@ stop() {
 	cd /sys/kernel/config/usb_gadget
 	echo "" > "$ACCESSORY_GADGET_NAME"/UDC
 	echo "" > "$DEFAULT_GADGET_NAME"/UDC
+
+	start-stop-daemon -K -q -s 9 -p "$PIDFILE"
+    RETVAL=$?
+    umount "$FUNCTIONFS_PATH"
+    rm -r "$FUNCTIONFS_PATH"
 
 	logger -s -p INFO -t usb_gadget Disabled usb gadget
 }
