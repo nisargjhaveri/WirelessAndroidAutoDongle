@@ -19,9 +19,6 @@ RETVAL=0
 start() {
 	mountpoint -q /sys/kernel/config || mount -t configfs none /sys/kernel/config
 
-	# Get first available UDC, assume only one is available
-	UDC=$(ls -1 /sys/class/udc/ | head -1)
-
 	# Setup accessory config
 	cd /sys/kernel/config/usb_gadget
 	if [ ! -d "$ACCESSORY_GADGET_NAME" ]; then
@@ -57,16 +54,13 @@ start() {
 	fi
 
 	# Mount FunctionFS and start uMTPrd
-    if [ ! -f "$FUNCTIONFS_PATH" ]; then
-        mkdir "$FUNCTIONFS_PATH"
-    fi
-    mount -t functionfs mtp "$FUNCTIONFS_PATH"
-    start-stop-daemon -S -b -q -m -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
-    RETVAL=$?
+	if [ ! -f "$FUNCTIONFS_PATH" ]; then
+		mkdir "$FUNCTIONFS_PATH"
+	fi
+	mount -t functionfs mtp "$FUNCTIONFS_PATH"
+	start-stop-daemon -S -b -q -m -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
+	RETVAL=$?
 	sleep 1
-
-	# Enable default
-	echo $UDC > "/sys/kernel/config/usb_gadget/$DEFAULT_GADGET_NAME/UDC"
 
 	logger -s -p INFO -t usb_gadget Enabled default usb gadget
 }
@@ -77,9 +71,9 @@ stop() {
 	echo "" > "$DEFAULT_GADGET_NAME"/UDC
 
 	start-stop-daemon -K -q -s 9 -p "$PIDFILE"
-    RETVAL=$?
-    umount "$FUNCTIONFS_PATH"
-    rm -r "$FUNCTIONFS_PATH"
+	RETVAL=$?
+	umount "$FUNCTIONFS_PATH"
+	rm -r "$FUNCTIONFS_PATH"
 
 	logger -s -p INFO -t usb_gadget Disabled usb gadget
 }
