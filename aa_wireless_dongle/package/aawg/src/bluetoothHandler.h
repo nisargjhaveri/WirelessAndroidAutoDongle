@@ -8,13 +8,21 @@ class HSPHSProfile;
 
 class BluetoothHandler {
 public:
+    static BluetoothHandler& instance();
+
     void init();
+    void connect();
+    void cleanup();
 
 private:
+    BluetoothHandler() {};
+    BluetoothHandler(BluetoothHandler const&);
+    BluetoothHandler& operator=(BluetoothHandler const&);
+
     DBus::ManagedObjects getBluezObjects();
 
     void initAdapter();
-    void powerOn();
+    void setPower(bool on);
     void setPairable(bool pairable);
     void exportProfiles();
     void connectDevice();

@@ -13,24 +13,30 @@ int main(void) {
     // Global init
     std::optional<std::thread> ueventThread =  UeventMonitor::instance().start();
     UsbManager::instance().init();
+    BluetoothHandler::instance().init();
 
-    // Per connection setup and processing
-    UsbManager::instance().disableGadget();
-    UsbManager::instance().enableDefaultAndWaitForAccessroy();
+    while (true) {
+        // Per connection setup and processing
+        UsbManager::instance().enableDefaultAndWaitForAccessroy();
 
-    AAWProxy proxy;
-    std::optional<std::thread> proxyThread = proxy.startServer(Config::instance()->getWifiInfo().port);
+        AAWProxy proxy;
+        std::optional<std::thread> proxyThread = proxy.startServer(Config::instance()->getWifiInfo().port);
 
-    if (!proxyThread) {
-        return 1;
+        if (!proxyThread) {
+            return 1;
+        }
+
+        BluetoothHandler::instance().connect();
+
+        proxyThread->join();
+        BluetoothHandler::instance().cleanup();
+        UsbManager::instance().disableGadget();
+
+        // sleep for a couple of seconds before retrying
+        sleep(2);
     }
 
-    BluetoothHandler bt;
-    bt.init();
-
-    proxyThread->join();
-
-    // ueventThread->join();
+    ueventThread->join();
 
     return 0;
 }

@@ -43,6 +43,11 @@ public:
 };
 
 
+BluetoothHandler& BluetoothHandler::instance() {
+    static BluetoothHandler instance;
+    return instance;
+}
+
 DBus::ManagedObjects BluetoothHandler::getBluezObjects() {
     std::shared_ptr<DBus::ObjectProxy> m_bluezRootObject = m_connection->create_object_proxy(BLUEZ_BUS_NAME, BLUEZ_ROOT_OBJECT_PATH);
     DBus::MethodProxy getManagedObjects = *(m_bluezRootObject->create_method<DBus::ManagedObjects(void)>("org.freedesktop.DBus.ObjectManager", "GetManagedObjects"));
@@ -72,17 +77,17 @@ void BluetoothHandler::initAdapter() {
     }
     else {
         m_adapter = BluezAdapterProxy::create(m_connection, adapter_path);
+        m_adapter->alias->set_value(ADAPTER_ALIAS);
     }
 }
 
-void BluetoothHandler::powerOn() {
+void BluetoothHandler::setPower(bool on) {
     if (!m_adapter) {
         return;
     }
 
-    m_adapter->alias->set_value(ADAPTER_ALIAS);
-    m_adapter->powered->set_value(true);
-    Logger::instance()->info("Bluetooth adapter was Powered On\n");
+    m_adapter->powered->set_value(on);
+    Logger::instance()->info("Bluetooth adapter was powered %s\n", on ? "on" : "off");
 }
 
 void BluetoothHandler::setPairable(bool pairable) {
@@ -172,7 +177,22 @@ void BluetoothHandler::init() {
 
     initAdapter();
     exportProfiles();
-    powerOn();
+}
+
+void BluetoothHandler::connect() {
+    if (!m_adapter) {
+        return;
+    }
+
+    setPower(true);
     setPairable(true);
     connectDevice();
+}
+
+void BluetoothHandler::cleanup() {
+    if (!m_adapter) {
+        return;
+    }
+
+    setPower(false);
 }
