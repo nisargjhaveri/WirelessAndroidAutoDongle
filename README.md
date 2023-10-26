@@ -19,28 +19,14 @@ The setup should work on any devices with these basic requirements (albeit, with
 Currently tested with multiple Raspberry Pi boards supporting USB OTG.
 
 ## Build
-### Start the vagrant box
+Use docker to build:
 ```shell
-$ git clone https://github.com/nisargjhaveri/AAWirelessDongle
-$ vagrant up
-$ vagrant ssh
-```
-
-### Setup buildroot environment (inside the VM) and build
-```shell
-$ git clone --recurse-submodules https://github.com/nisargjhaveri/AAWirelessDongle
-$ cd AAWirelessDongle/buildroot
-$ make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi0w raspberrypi0w_defconfig # Change output and defconfig for your board
-$ cd output/rpi0w
-$ make
+git clone --recurse-submodules https://github.com/hkfuertes/AAWirelessDongle
+docker-compose run build_XXXX # See docker-compose.yml for available options.
 ```
 
 You may want to update the `country_code` in the relavent `hostapd.conf` file for your board. See [/board/common/rootfs_overlay/etc/hostapd.conf](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf) and other board specific overrides.
 
-Use one of the following defconfig for the board you intend to use:
-- `raspberrypi0w_defconfig` - Raspberry Pi Zero W
-- `raspberrypizero2w_defconfig` - Raspberry Pi Zero 2 W
-- `raspberrypi4_defconfig` - Raspberry Pi 4
 
 ## Install and run
 Build should generate the sd card image at `images/sdcard.img` in your output directory. Install this image on the SD card using your favourite tool.

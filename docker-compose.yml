@@ -1,0 +1,26 @@
+version: '3.5'
+
+# Modify this file uncomment the proper command
+# docker-compose run build_XXXX
+
+services:
+  build_rpi02w:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app/buildroot
+    command: bash -c "make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi02w raspberrypizero2w_defconfig && cd output/rpi02w && make"
+
+  build_rpi0w:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app/buildroot
+    command: bash -c "make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi0w raspberrypi0w_defconfig && cd output/rpi0w && make"
+
+  build_rpi3a:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app/buildroot
+    command: bash -c "make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi3a raspberrypi3a_defconfig && cd output/rpi3a && make"
