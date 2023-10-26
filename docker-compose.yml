@@ -24,3 +24,10 @@ services:
       - .:/app
     working_dir: /app/buildroot
     command: bash -c "make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi3a raspberrypi3a_defconfig && cd output/rpi3a && make"
+  
+  build_rpi4:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app/buildroot
+    command: bash -c "make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi4 raspberrypi4_defconfig && cd output/rpi4 && make"
