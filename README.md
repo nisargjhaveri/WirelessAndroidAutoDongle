@@ -21,7 +21,7 @@ Currently tested with multiple Raspberry Pi boards supporting USB OTG.
 ## Build with docker
 Use docker to build:
 ```shell
-git clone --recurse-submodules https://github.com/hkfuertes/AAWirelessDongle
+git clone --recurse-submodules https://github.com/nisargjhaveri/AAWirelessDongle
 docker-compose run build_XXXX # See docker-compose.yml for available options.
 ```
 
