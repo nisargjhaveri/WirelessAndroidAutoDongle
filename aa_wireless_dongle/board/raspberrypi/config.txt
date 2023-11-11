@@ -21,4 +21,4 @@ gpu_mem_1024=100
 dtparam=krnbt=on
 
 # Enable dwc2 required for gadget mode
-dtoverlay=dwc2
+dtoverlay=dwc2,dr_mode=peripheral
