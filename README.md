@@ -18,6 +18,17 @@ The setup should work on any devices with these basic requirements (albeit, with
 
 Currently tested with multiple Raspberry Pi boards supporting USB OTG.
 
+## Install and run
+[Download a pre-built sd card image](https://github.com/nisargjhaveri/AAWirelessDongle/releases) or build one as described below. Install the image on the SD card using your favorite tool.
+
+You may want to update the `country_code` in the `/etc/hostapd.conf` file.
+
+That should be it. Insert the SD card and connect the board to the car. Make sure to use a data cable, with the USB OTG enabled port.
+
+Once the car recognizes the device and sends a request to start Android Auto, bluetooth is enabled. On your phone, open Bluetooth settings and pair a new device called "AA Wireless Dongle". Once paired, it should automatically start the Wireless Android Auto on the car screen.
+
+From the next time, it should automatically connect to your phone, no need to pair again. Make sure your Bluetooth and Wifi are enabled on the phone.
+
 ## Build
 ### Start the vagrant box
 ```shell
@@ -35,22 +46,13 @@ $ cd output/rpi0w
 $ make
 ```
 
-You may want to update the `country_code` in the relavent `hostapd.conf` file for your board. See [/board/common/rootfs_overlay/etc/hostapd.conf](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf) and other board specific overrides.
+When successful, this should generate the sd card image at `images/sdcard.img` in your output directory. See the "Install and Run" instructions above to use this image.
 
 Use one of the following defconfig for the board you intend to use:
 - `raspberrypi0w_defconfig` - Raspberry Pi Zero W
 - `raspberrypizero2w_defconfig` - Raspberry Pi Zero 2 W
 - `raspberrypi3a_defconfig` - Raspberry Pi 3A+
 - `raspberrypi4_defconfig` - Raspberry Pi 4
-
-## Install and run
-Build should generate the sd card image at `images/sdcard.img` in your output directory. Install this image on the SD card using your favourite tool.
-
-That should be it. Insert the SD card and connect the board to the car. Make sure to use a data cable, with the USB OTG enabled port.
-
-Once the car recognizes the device and sends a request to start Android Auto, bluetooth is enabled. On your phone, open Bluetooth settings and pair a new device called "AA Wireless Dongle". Once paired, it should automatically start the Wireless Android Auto on the car screen.
-
-From the next time, it should automatically connect to your phone, no need to pair again. Make sure your Bluetooth and Wifi are enabled on the phone.
 
 ## Limitations
 - Tested with very limited set of headunits and cars. Let me know if it does not work with your headunit.
