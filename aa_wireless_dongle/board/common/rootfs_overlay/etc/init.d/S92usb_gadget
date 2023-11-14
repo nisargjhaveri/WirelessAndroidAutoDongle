@@ -3,7 +3,7 @@
 # Configure USB gadget interfaces
 #
 
-SERIAL_NUMBER="0"
+SERIAL_NUMBER="0123456"
 MANUFACTURER="My Own"
 PRODUCT="AA Wireless Dongle"
 
@@ -41,8 +41,8 @@ start() {
 	if [ ! -d "$DEFAULT_GADGET_NAME" ]; then
 		mkdir "$DEFAULT_GADGET_NAME"
 		cd "$DEFAULT_GADGET_NAME"
-		echo "0x1D6B" > idVendor
-		echo "0x0105" > idProduct
+		echo "0x18D1" > idVendor
+		echo "0x4EE1" > idProduct
 		mkdir strings/0x409
 		echo "$SERIAL_NUMBER" > strings/0x409/serialnumber
 		echo "$MANUFACTURER" > strings/0x409/manufacturer
