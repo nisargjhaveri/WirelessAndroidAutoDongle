@@ -40,6 +40,7 @@ You may want to update the `country_code` in the relavent `hostapd.conf` file fo
 Use one of the following defconfig for the board you intend to use:
 - `raspberrypi0w_defconfig` - Raspberry Pi Zero W
 - `raspberrypizero2w_defconfig` - Raspberry Pi Zero 2 W
+- `raspberrypi3a_defconfig` - Raspberry Pi 3A+
 - `raspberrypi4_defconfig` - Raspberry Pi 4
 
 ## Install and run
@@ -47,7 +48,7 @@ Build should generate the sd card image at `images/sdcard.img` in your output di
 
 That should be it. Insert the SD card and connect the board to the car. Make sure to use a data cable, with the USB OTG enabled port.
 
-On your phone, open Bluetooth settings and pair a new device called "AA Wireless Dongle". Once paired, it should automatically start the Wireless Android Auto on the car screen.
+Once the car recognizes the device and sends a request to start Android Auto, bluetooth is enabled. On your phone, open Bluetooth settings and pair a new device called "AA Wireless Dongle". Once paired, it should automatically start the Wireless Android Auto on the car screen.
 
 From the next time, it should automatically connect to your phone, no need to pair again. Make sure your Bluetooth and Wifi are enabled on the phone.
 
