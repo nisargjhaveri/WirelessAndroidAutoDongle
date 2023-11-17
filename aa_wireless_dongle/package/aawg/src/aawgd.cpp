@@ -29,7 +29,7 @@ int main(void) {
         BluetoothHandler::instance().connect();
 
         proxyThread->join();
-        BluetoothHandler::instance().cleanup();
+        BluetoothHandler::instance().powerOff();
         UsbManager::instance().disableGadget();
 
         // sleep for a couple of seconds before retrying

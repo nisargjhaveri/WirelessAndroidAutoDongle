@@ -12,7 +12,7 @@ public:
 
     void init();
     void connect();
-    void cleanup();
+    void powerOff();
 
 private:
     BluetoothHandler() {};
