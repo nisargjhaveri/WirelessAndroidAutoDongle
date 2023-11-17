@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 
 #include "common.h"
+#include "bluetoothHandler.h"
 #include "bluetoothProfiles.h"
 
 #include <google/protobuf/message_lite.h>
@@ -166,6 +167,8 @@ void AAWirelessProfile::NewConnection(DBus::Path path, std::shared_ptr<DBus::Fil
 
     AAWirelessLauncher(fd->descriptor()).launch();
     Logger::instance()->info("Bluetooth launch sequence completed\n");
+
+    BluetoothHandler::instance().powerOff();
 }
 
 void AAWirelessProfile::RequestDisconnection(DBus::Path path) {
