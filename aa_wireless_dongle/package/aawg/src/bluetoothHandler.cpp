@@ -17,10 +17,6 @@ static constexpr const char* INTERFACE_BLUEZ_PROFILE_MANAGER = "org.bluez.Profil
 static constexpr const char* AAWG_PROFILE_OBJECT_PATH = "/com/aawgd/bluetooth/aawg";
 static constexpr const char* AAWG_PROfILE_UUID = "4de17a00-52cb-11e6-bdf4-0800200c9a66";
 
-static constexpr const char* HSP_HS_PROFILE_OBJECT_PATH = "/com/aawgd/bluetooth/hsp";
-static constexpr const char* HSP_AG_UUID = "00001112-0000-1000-8000-00805f9b34fb";
-static constexpr const char* HSP_HS_UUID = "00001108-0000-1000-8000-00805f9b34fb";
-
 
 class BluezAdapterProxy: private DBus::ObjectProxy {
     BluezAdapterProxy(std::shared_ptr<DBus::Connection> conn, DBus::Path path): DBus::ObjectProxy(conn, BLUEZ_BUS_NAME, path) {
@@ -114,18 +110,56 @@ void BluetoothHandler::exportProfiles() {
         {"Name", DBus::Variant("AA Wireless")},
         {"Role", DBus::Variant("server")},
         {"Channel", DBus::Variant(uint16_t(8))},
+        {
+            "ServiceRecord",
+            DBus::Variant("<?xml version=\"1.0\"?>\n\
+<record>\n\
+    <attribute id=\"0x0001\">\n\
+        <sequence>\n\
+            <uuid value=\"4de17a00-52cb-11e6-bdf4-0800200c9a66\"/>\n\
+            <uuid value=\"0x1101\"/>\n\
+        </sequence>\n\
+    </attribute>\n\
+    <attribute id=\"0x0003\">\n\
+        <uuid value=\"4de17a00-52cb-11e6-bdf4-0800200c9a66\"/>\n\
+    </attribute>\n\
+    <attribute id=\"0x0004\">\n\
+        <sequence>\n\
+            <sequence>\n\
+                <uuid value=\"0x0100\"/>\n\
+            </sequence>\n\
+            <sequence>\n\
+                <uuid value=\"0x0003\"/>\n\
+                <uint8 value=\"0x08\"/>\n\
+            </sequence>\n\
+        </sequence>\n\
+    </attribute>\n\
+    <attribute id=\"0x0005\">\n\
+        <sequence>\n\
+            <uuid value=\"0x1002\"/>\n\
+        </sequence>\n\
+    </attribute>\n\
+    <attribute id=\"0x0009\">\n\
+        <sequence>\n\
+            <uuid value=\"0x1101\"/>\n\
+        </sequence>\n\
+    </attribute>\n\
+    <attribute id=\"0x0100\">\n\
+        <text value=\"AAWG Bluetooth Service\" encoding=\"normal\"/>\n\
+    </attribute>\n\
+    <attribute id=\"0x0101\">\n\
+        <text\n\
+            value=\"AndroidAuto WiFi projection automatic setup\"\n\
+            encoding=\"normal\"\n\
+        />\n\
+    </attribute>\n\
+    <attribute id=\"0x0102\">\n\
+        <text value=\"AAWG\" encoding=\"normal\"/>\n\
+    </attribute>\n\
+</record>")
+        }
     });
     Logger::instance()->info("Bluetooth AA Wireless profile active\n");
-
-    // Register HSP Handset profile
-    m_hspProfile = HSPHSProfile::create(HSP_HS_PROFILE_OBJECT_PATH);
-    if (m_connection->register_object(m_hspProfile, DBus::ThreadForCalling::DispatcherThread) != DBus::RegistrationStatus::Success) {
-        Logger::instance()->info("Failed to register HSP Handset profile\n");
-    }
-    registerProfile(HSP_HS_PROFILE_OBJECT_PATH, HSP_HS_UUID, {
-        {"Name", DBus::Variant("HSP HS")},
-    });
-    Logger::instance()->info("HSP Handset profile active\n");
 }
 
 void BluetoothHandler::connectDevice() {
@@ -151,10 +185,10 @@ void BluetoothHandler::connectDevice() {
         Logger::instance()->info("Trying to connect bluetooth device at path: %s\n", device_path.c_str());
 
         std::shared_ptr<DBus::ObjectProxy> bluezDevice = m_connection->create_object_proxy(BLUEZ_BUS_NAME, device_path);
-        DBus::MethodProxy connectProfile = *(bluezDevice->create_method<void(std::string)>(INTERFACE_BLUEZ_DEVICE, "ConnectProfile"));
+        DBus::MethodProxy connect = *(bluezDevice->create_method<void()>(INTERFACE_BLUEZ_DEVICE, "Connect"));
 
         try {
-            connectProfile(HSP_AG_UUID);
+            connect();
             Logger::instance()->info("Bluetooth connected to the device\n");
             return;
         } catch (DBus::Error& e) {

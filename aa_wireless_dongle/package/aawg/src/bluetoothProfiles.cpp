@@ -179,25 +179,3 @@ AAWirelessProfile::AAWirelessProfile(DBus::Path path): BluezProfile(path) {};
     return std::shared_ptr<AAWirelessProfile>(new AAWirelessProfile(path));
 }
 #pragma endregion AAWirelessProfile
-
-#pragma region HSPHSProfile
-void HSPHSProfile::Release() {
-    Logger::instance()->info("HSP HS Release\n");
-}
-
-void HSPHSProfile::NewConnection(DBus::Path path, std::shared_ptr<DBus::FileDescriptor> fd, DBus::Properties fdProperties) {
-    Logger::instance()->info("HSP HS NewConnection\n");
-    Logger::instance()->info("Path: %s, fd: %d\n", path.c_str(), fd->descriptor());
-}
-
-void HSPHSProfile::RequestDisconnection(DBus::Path path) {
-    Logger::instance()->info("HSP HS RequestDisconnection\n");
-    Logger::instance()->info("Path: %s\n", path.c_str());
-}
-
-HSPHSProfile::HSPHSProfile(DBus::Path path): BluezProfile(path) {};
-
-/* static */ std::shared_ptr<HSPHSProfile> HSPHSProfile::create(DBus::Path path) {
-    return std::shared_ptr<HSPHSProfile>(new HSPHSProfile(path));
-}
-#pragma endregion HSPHSProfile
