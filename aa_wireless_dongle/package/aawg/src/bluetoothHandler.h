@@ -4,7 +4,6 @@
 
 class BluezAdapterProxy;
 class AAWirelessProfile;
-class HSPHSProfile;
 
 class BluetoothHandler {
 public:
@@ -32,5 +31,4 @@ private:
     std::shared_ptr<BluezAdapterProxy> m_adapter;
 
     std::shared_ptr<AAWirelessProfile> m_aawProfile;
-    std::shared_ptr<HSPHSProfile> m_hspProfile;
 };
