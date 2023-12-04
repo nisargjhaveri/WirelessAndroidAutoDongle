@@ -17,8 +17,11 @@ private:
     void handleClient(int server_fd);
     void forward(ProxyDirection direction, std::atomic<bool>& should_exit);
 
-    ssize_t readFully(int fd, unsigned char *buf, size_t nbyte);
-    ssize_t readMessage(int fd, unsigned char *buf, size_t nbyte);
+    ssize_t interruptibleRead(int fd, unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt);
+    ssize_t interruptibleWrite(int fd, const unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt);
+
+    ssize_t readFully(int fd, unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt);
+    ssize_t readMessage(int fd, unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt);
 
     int m_usb_fd = -1;
     int m_tcp_fd = -1;

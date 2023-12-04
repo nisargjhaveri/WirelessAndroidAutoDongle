@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <poll.h>
 #include <fcntl.h>
 #include <string.h>
 #include <netinet/in.h>
@@ -13,10 +14,78 @@
 #include "common.h"
 #include "proxyHandler.h"
 
-ssize_t AAWProxy::readFully(int fd, unsigned char *buffer, size_t nbyte) {
+ssize_t AAWProxy::interruptibleRead(int fd, unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt) {
+    struct pollfd pfd = {
+        .fd = fd,
+        .events = POLLIN, 
+        .revents = 0
+    };
+
+    while (true) {
+        int ret = poll(&pfd, 1, 500);
+
+        if (ret < 0) {
+            // Some error, return
+            return ret;
+        }
+        else if (interrupt) {
+            // The call is interrupted, return
+            errno = ECANCELED;
+            return -1;
+        }
+        else if (ret == 0) {
+            // Timeout without interrupt, retry
+            continue;
+        }
+        else if (pfd.revents & POLLIN) {
+            // Ready to read
+            return read(fd, buf, nbyte);
+        }
+        else {
+            // POLLERR/POLLHUP? Do we need to handle this differently? Retrying.
+            // Shouldn't really reach here
+        }
+    }
+}
+
+ssize_t AAWProxy::interruptibleWrite(int fd, const unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt) {
+    struct pollfd pfd = {
+        .fd = fd,
+        .events = POLLOUT, 
+        .revents = 0
+    };
+
+    while (true) {
+        int ret = poll(&pfd, 1, 500);
+
+        if (ret < 0) {
+            // Some error, return
+            return ret;
+        }
+        else if (interrupt) {
+            // The call is interrupted, return
+            errno = ECANCELED;
+            return -1;
+        }
+        else if (ret == 0) {
+            // Timeout without interrupt, retry
+            continue;
+        }
+        else if (pfd.revents & POLLOUT) {
+            // Ready to write
+            return write(fd, buf, nbyte);
+        }
+        else {
+            // POLLERR/POLLHUP? Do we need to handle this differently? Retrying.
+            // Shouldn't really reach here
+        }
+    }
+}
+
+ssize_t AAWProxy::readFully(int fd, unsigned char *buffer, size_t nbyte, std::atomic<bool>& interrupt) {
     size_t remaining_bytes = nbyte;
     while (remaining_bytes > 0) {
-        ssize_t len = read(fd, buffer, remaining_bytes);
+        ssize_t len = interruptibleRead(fd, buffer, remaining_bytes, interrupt);
 
         if (len <= 0) {
             // Error, cannot read more.
@@ -30,9 +99,9 @@ ssize_t AAWProxy::readFully(int fd, unsigned char *buffer, size_t nbyte) {
     return nbyte;
 }
 
-ssize_t AAWProxy::readMessage(int fd, unsigned char *buffer, size_t buffer_len) {
+ssize_t AAWProxy::readMessage(int fd, unsigned char *buffer, size_t buffer_len, std::atomic<bool>& interrupt) {
     size_t header_length = 4;
-    if (ssize_t len = readFully(fd, buffer, header_length); len <= 0) {
+    if (ssize_t len = readFully(fd, buffer, header_length, interrupt); len <= 0) {
         return len;
     }
 
@@ -51,7 +120,7 @@ ssize_t AAWProxy::readMessage(int fd, unsigned char *buffer, size_t buffer_len) 
         return -1;
     }
 
-    if (ssize_t len = readFully(fd, buffer + header_length, message_length); len <= 0) {
+    if (ssize_t len = readFully(fd, buffer + header_length, message_length, interrupt); len <= 0) {
         return len;
     }
 
@@ -87,7 +156,7 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
     }
 
     while (!should_exit) {
-        ssize_t len = read_message ? readMessage(read_fd, buffer, buffer_len) : read(read_fd, buffer, buffer_len);
+        ssize_t len = read_message ? readMessage(read_fd, buffer, buffer_len, should_exit) : interruptibleRead(read_fd, buffer, buffer_len, should_exit);
         Logger::instance()->info("%d bytes read from %s\n", len, read_name.c_str());
         if (len < 0) {
             Logger::instance()->info("Read from %s failed: %s\n", read_name.c_str(), strerror(errno));
@@ -97,7 +166,7 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
             break;
         }
 
-        ssize_t wlen = write(write_fd, buffer, len);
+        ssize_t wlen = interruptibleWrite(write_fd, buffer, len, should_exit);
         Logger::instance()->info("%d bytes written to %s\n", wlen, write_name.c_str());
         if (wlen < 0) {
             Logger::instance()->info("Write to %s failed: %s\n", write_name.c_str(), strerror(errno));
