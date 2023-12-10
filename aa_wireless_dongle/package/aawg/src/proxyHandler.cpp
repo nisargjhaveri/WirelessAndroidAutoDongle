@@ -155,7 +155,7 @@ bool AAWProxy::performUsbVersionExchange() {
 
     usb_version_major = (buffer[6] << 8) + buffer[7];
     usb_version_minor = (buffer[8] << 8) + buffer[9];
-    Logger::instance()->info("USB reported version: major %d, minor %d\n", usb_version_major, usb_version_minor);
+    Logger::instance()->info("USB reported version: %d.%d\n", usb_version_major, usb_version_minor);
 
     // Send version response
     unsigned char version_response_buffer[12] = {
@@ -218,10 +218,10 @@ bool AAWProxy::performTcpVersionExchange() {
 
     uint16_t tcp_version_major = (buffer[6] << 8) + buffer[7];
     uint16_t tcp_version_minor = (buffer[8] << 8) + buffer[9];
-    Logger::instance()->info("TCP reported version: major %d, minor %d\n", tcp_version_major, tcp_version_minor);
+    Logger::instance()->info("TCP reported version: %d.%d\n", tcp_version_major, tcp_version_minor);
 
     if (tcp_version_major != default_version_major || tcp_version_minor != default_version_minor) {
-        Logger::instance()->info("Version from TCP does not match version earlier reported (major %d, minor %d) to USB!\n", default_version_major, default_version_minor);
+        Logger::instance()->info("Version from TCP does not match version earlier reported (%d.%d) to USB!\n", default_version_major, default_version_minor);
     }
 
     uint16_t tcp_version_response_status = (buffer[10] << 8) + buffer[11];
