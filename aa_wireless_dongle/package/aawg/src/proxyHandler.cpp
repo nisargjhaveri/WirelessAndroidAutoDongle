@@ -14,15 +14,15 @@
 #include "common.h"
 #include "proxyHandler.h"
 
-ssize_t AAWProxy::interruptibleRead(int fd, unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt) {
+int AAWProxy::poll(int fd, short event, std::atomic<bool>& interrupt) {
     struct pollfd pfd = {
         .fd = fd,
-        .events = POLLIN, 
+        .events = event,
         .revents = 0
     };
 
     while (true) {
-        int ret = poll(&pfd, 1, 500);
+        int ret = ::poll(&pfd, 1, 500);
 
         if (ret < 0) {
             // Some error, return
@@ -37,9 +37,8 @@ ssize_t AAWProxy::interruptibleRead(int fd, unsigned char *buf, size_t nbyte, st
             // Timeout without interrupt, retry
             continue;
         }
-        else if (pfd.revents & POLLIN) {
-            // Ready to read
-            return read(fd, buf, nbyte);
+        else if (pfd.revents & event) {
+            return 1;
         }
         else {
             // POLLERR/POLLHUP? Do we need to handle this differently? Retrying.
@@ -48,44 +47,26 @@ ssize_t AAWProxy::interruptibleRead(int fd, unsigned char *buf, size_t nbyte, st
     }
 }
 
-ssize_t AAWProxy::interruptibleWrite(int fd, const unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt) {
-    struct pollfd pfd = {
-        .fd = fd,
-        .events = POLLOUT, 
-        .revents = 0
-    };
-
-    while (true) {
-        int ret = poll(&pfd, 1, 500);
-
-        if (ret < 0) {
-            // Some error, return
-            return ret;
-        }
-        else if (interrupt) {
-            // The call is interrupted, return
-            errno = ECANCELED;
-            return -1;
-        }
-        else if (ret == 0) {
-            // Timeout without interrupt, retry
-            continue;
-        }
-        else if (pfd.revents & POLLOUT) {
-            // Ready to write
-            return write(fd, buf, nbyte);
-        }
-        else {
-            // POLLERR/POLLHUP? Do we need to handle this differently? Retrying.
-            // Shouldn't really reach here
-        }
+ssize_t AAWProxy::read(int fd, unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt) {
+    if (int result = poll(fd, POLLIN, interrupt); result <= 0) {
+        return result;
     }
+
+    return ::read(fd, buf, nbyte);
+}
+
+ssize_t AAWProxy::write(int fd, const unsigned char *buf, size_t nbyte, std::atomic<bool>& interrupt) {
+    if (int result = poll(fd, POLLOUT, interrupt); result <= 0) {
+        return result;
+    }
+
+    return ::write(fd, buf, nbyte);
 }
 
 ssize_t AAWProxy::readFully(int fd, unsigned char *buffer, size_t nbyte, std::atomic<bool>& interrupt) {
     size_t remaining_bytes = nbyte;
     while (remaining_bytes > 0) {
-        ssize_t len = interruptibleRead(fd, buffer, remaining_bytes, interrupt);
+        ssize_t len = read(fd, buffer, remaining_bytes, interrupt);
 
         if (len <= 0) {
             // Error, cannot read more.
@@ -156,7 +137,7 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
     }
 
     while (!should_exit) {
-        ssize_t len = read_message ? readMessage(read_fd, buffer, buffer_len, should_exit) : interruptibleRead(read_fd, buffer, buffer_len, should_exit);
+        ssize_t len = read_message ? readMessage(read_fd, buffer, buffer_len, should_exit) : read(read_fd, buffer, buffer_len, should_exit);
         Logger::instance()->info("%d bytes read from %s\n", len, read_name.c_str());
         if (len < 0) {
             Logger::instance()->info("Read from %s failed: %s\n", read_name.c_str(), strerror(errno));
@@ -166,7 +147,7 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
             break;
         }
 
-        ssize_t wlen = interruptibleWrite(write_fd, buffer, len, should_exit);
+        ssize_t wlen = write(write_fd, buffer, len, should_exit);
         Logger::instance()->info("%d bytes written to %s\n", wlen, write_name.c_str());
         if (wlen < 0) {
             Logger::instance()->info("Write to %s failed: %s\n", write_name.c_str(), strerror(errno));
