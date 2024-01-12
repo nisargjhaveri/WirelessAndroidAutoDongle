@@ -11,6 +11,7 @@
 #include <string>
 
 #include "common.h"
+#include "usb.h"
 #include "proxyHandler.h"
 
 ssize_t AAWProxy::readFully(int fd, unsigned char *buffer, size_t nbyte) {
@@ -120,6 +121,8 @@ void AAWProxy::handleClient(int server_sock) {
     close(server_sock);
 
     Logger::instance()->info("Tcp server accepted connection\n");
+
+    UsbManager::instance().enableDefaultAndWaitForAccessroy();
 
     Logger::instance()->info("Opening usb accessory\n");
     if ((m_usb_fd = open("/dev/usb_accessory", O_RDWR)) < 0) {

@@ -17,8 +17,6 @@ int main(void) {
 
     while (true) {
         // Per connection setup and processing
-        UsbManager::instance().enableDefaultAndWaitForAccessroy();
-
         AAWProxy proxy;
         std::optional<std::thread> proxyThread = proxy.startServer(Config::instance()->getWifiInfo().port);
 
