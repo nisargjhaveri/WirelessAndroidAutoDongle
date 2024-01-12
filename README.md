@@ -29,6 +29,14 @@ Once the car recognizes the device and sends a request to start Android Auto, bl
 
 From the next time, it should automatically connect to your phone, no need to pair again. Make sure your Bluetooth and Wifi are enabled on the phone.
 
+## Troubleshoot
+Once you've already tried multiple times and it still does not work, you can ssh into the device and try to get some logs.
+
+- Connect the device to the headunit, let it boot and try to connect once. The logs are not persisted across reboots, so you need to get the logs in the same instance soon after you observe the issue.
+- Connect to the device using wifi (SSID:AAWirelessDongle, Password: ConnectAAWirelessDongle, see [hostapd.conf](https://github.com/nisargjhaveri/AAWirelessDongle/blob/main/aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)).
+- SSH into the device (username: root, password: password, see relevant defconfigs e.g. [raspberrypi0w_defconfig](https://github.com/nisargjhaveri/AAWirelessDongle/blob/main/aa_wireless_dongle/configs/raspberrypi0w_defconfig)).
+- Once you're in, try to have a look at `/var/log/messages` file, it should have most relevant logs to start with. You can also copy the file and attach to issues you create if any.
+
 ## Build
 ### Start the vagrant box
 ```shell
