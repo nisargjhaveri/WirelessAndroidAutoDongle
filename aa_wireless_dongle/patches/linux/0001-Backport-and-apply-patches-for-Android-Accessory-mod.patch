@@ -1,6 +1,6 @@
-From df75c63e6f2bf543874d8c5923e69853ec84b71f Mon Sep 17 00:00:00 2001
+From 6aa877477aaa9df66d9d8cf47a9e5907aaf9d093 Mon Sep 17 00:00:00 2001
 From: Nisarg Jhaveri <nisargjhaveri@gmail.com>
-Date: Fri, 21 Apr 2023 07:45:18 +0000
+Date: Sat, 20 Jan 2024 17:56:40 +0000
 Subject: [PATCH] Backport and apply patches for Android Accessory mode
 
 Following two patches are applied
@@ -21,7 +21,7 @@ https://cs.android.com/android/kernel/superproject/+/common-android-mainline:ker
  create mode 100644 include/uapi/linux/usb/f_accessory.h
 
 diff --git a/drivers/usb/gadget/Kconfig b/drivers/usb/gadget/Kconfig
-index 2d152571a7de..921603f12380 100644
+index 4fa2ddf322b4..8150eae628ee 100644
 --- a/drivers/usb/gadget/Kconfig
 +++ b/drivers/usb/gadget/Kconfig
 @@ -216,6 +216,9 @@ config USB_F_PRINTER
@@ -65,7 +65,7 @@ index 2d152571a7de..921603f12380 100644
  	bool "Audio Class 1.0"
  	depends on USB_CONFIGFS
 diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-index 9b7fa53d6642..d3cbcd9cfb50 100644
+index 4dcf29577f8f..6fa9f09da068 100644
 --- a/drivers/usb/gadget/configfs.c
 +++ b/drivers/usb/gadget/configfs.c
 @@ -10,6 +10,32 @@
@@ -114,7 +114,7 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  };
  
  static inline struct gadget_info *to_gadget_info(struct config_item *item)
-@@ -272,7 +304,7 @@ static ssize_t gadget_dev_desc_UDC_store(struct config_item *item,
+@@ -273,7 +305,7 @@ static ssize_t gadget_dev_desc_UDC_store(struct config_item *item,
  
  	mutex_lock(&gi->lock);
  
@@ -123,7 +123,7 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  		ret = unregister_gadget(gi);
  		if (ret)
  			goto err;
-@@ -1422,6 +1454,57 @@ static int configfs_composite_bind(struct usb_gadget *gadget,
+@@ -1424,6 +1456,57 @@ static int configfs_composite_bind(struct usb_gadget *gadget,
  	return ret;
  }
  
@@ -181,7 +181,7 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  static void configfs_composite_unbind(struct usb_gadget *gadget)
  {
  	struct usb_composite_dev	*cdev;
-@@ -1447,6 +1530,50 @@ static void configfs_composite_unbind(struct usb_gadget *gadget)
+@@ -1451,6 +1534,50 @@ static void configfs_composite_unbind(struct usb_gadget *gadget)
  	spin_unlock_irqrestore(&gi->spinlock, flags);
  }
  
@@ -232,7 +232,7 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  static int configfs_composite_setup(struct usb_gadget *gadget,
  		const struct usb_ctrlrequest *ctrl)
  {
-@@ -1472,6 +1599,8 @@ static int configfs_composite_setup(struct usb_gadget *gadget,
+@@ -1476,6 +1603,8 @@ static int configfs_composite_setup(struct usb_gadget *gadget,
  	return ret;
  }
  
@@ -241,7 +241,7 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  static void configfs_composite_disconnect(struct usb_gadget *gadget)
  {
  	struct usb_composite_dev *cdev;
-@@ -1482,6 +1611,14 @@ static void configfs_composite_disconnect(struct usb_gadget *gadget)
+@@ -1486,6 +1615,14 @@ static void configfs_composite_disconnect(struct usb_gadget *gadget)
  	if (!cdev)
  		return;
  
@@ -256,7 +256,7 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  	gi = container_of(cdev, struct gadget_info, cdev);
  	spin_lock_irqsave(&gi->spinlock, flags);
  	cdev = get_gadget_data(gadget);
-@@ -1490,6 +1627,10 @@ static void configfs_composite_disconnect(struct usb_gadget *gadget)
+@@ -1494,6 +1631,10 @@ static void configfs_composite_disconnect(struct usb_gadget *gadget)
  		return;
  	}
  
@@ -267,7 +267,7 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  	composite_disconnect(gadget);
  	spin_unlock_irqrestore(&gi->spinlock, flags);
  }
-@@ -1542,7 +1683,11 @@ static const struct usb_gadget_driver configfs_driver_template = {
+@@ -1568,7 +1709,11 @@ static const struct usb_gadget_driver configfs_driver_template = {
  	.bind           = configfs_composite_bind,
  	.unbind         = configfs_composite_unbind,
  
@@ -276,10 +276,10 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
 +#else
  	.setup          = configfs_composite_setup,
 +#endif
- 	.reset          = configfs_composite_disconnect,
+ 	.reset          = configfs_composite_reset,
  	.disconnect     = configfs_composite_disconnect,
  
-@@ -1557,6 +1702,91 @@ static const struct usb_gadget_driver configfs_driver_template = {
+@@ -1582,6 +1727,91 @@ static const struct usb_gadget_driver configfs_driver_template = {
  	.match_existing_only = 1,
  };
  
@@ -371,17 +371,17 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  static struct config_group *gadgets_make(
  		struct config_group *group,
  		const char *name)
-@@ -1608,6 +1838,9 @@ static struct config_group *gadgets_make(
+@@ -1638,6 +1868,9 @@ static struct config_group *gadgets_make(
  
  	if (!gi->composite.gadget_driver.function)
- 		goto err;
+ 		goto out_free_driver_name;
 +	
 +	if (android_device_create(gi) < 0)
-+		goto err;
++		goto out_free_driver_name;
  
  	return &gi->group;
- err:
-@@ -1617,7 +1850,11 @@ static struct config_group *gadgets_make(
+ 
+@@ -1650,7 +1883,11 @@ static struct config_group *gadgets_make(
  
  static void gadgets_drop(struct config_group *group, struct config_item *item)
  {
@@ -393,7 +393,7 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  }
  
  static struct configfs_group_operations gadgets_ops = {
-@@ -1657,6 +1894,13 @@ static int __init gadget_cfs_init(void)
+@@ -1690,6 +1927,13 @@ static int __init gadget_cfs_init(void)
  	config_group_init(&gadget_subsys.su_group);
  
  	ret = configfs_register_subsystem(&gadget_subsys);
@@ -407,7 +407,7 @@ index 9b7fa53d6642..d3cbcd9cfb50 100644
  	return ret;
  }
  module_init(gadget_cfs_init);
-@@ -1664,5 +1908,10 @@ module_init(gadget_cfs_init);
+@@ -1697,5 +1941,10 @@ module_init(gadget_cfs_init);
  static void __exit gadget_cfs_exit(void)
  {
  	configfs_unregister_subsystem(&gadget_subsys);
@@ -2009,10 +2009,10 @@ index 000000000000..ce7814c22057
 +DECLARE_USB_FUNCTION_INIT(accessory, acc_alloc_inst, acc_alloc);
 +MODULE_LICENSE("GPL");
 diff --git a/include/linux/usb/composite.h b/include/linux/usb/composite.h
-index a2d229ab63ba..8b96c75dfe6c 100644
+index 43ac3fa760db..814f65799200 100644
 --- a/include/linux/usb/composite.h
 +++ b/include/linux/usb/composite.h
-@@ -590,6 +590,7 @@ struct usb_function_instance {
+@@ -578,6 +578,7 @@ struct usb_function_instance {
  	struct config_group group;
  	struct list_head cfs_list;
  	struct usb_function_driver *fd;
@@ -2202,5 +2202,5 @@ index 000000000000..0baeb7d0d74c
 +
 +#endif /* _UAPI_LINUX_USB_F_ACCESSORY_H */
 -- 
-2.17.1
+2.34.1
 
