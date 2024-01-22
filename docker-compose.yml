@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  bash: &base
+    build: .
+    image: aawg-buildroot
+    volumes:
+      - .:/app
+      - dl:/app/buildroot/dl
+      - output:/app/buildroot/output
+    working_dir: /app/buildroot
+    command: bash
+  
+  generate_image_donotuse: &generate_image
+    <<: *base
+    command: bash -x -c "make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/$${BOARD_NAME} $${BOARD_NAME}_defconfig && cd output/$${BOARD_NAME} && make && mkdir -p /app/images/ && cp images/sdcard.img /app/images/sdcard-$${BOARD_NAME}.img"
+  
+  rpi0w:
+    <<: *generate_image
+    environment:
+      - BOARD_NAME=raspberrypi0w
+
+  rpi02w:
+    <<: *generate_image
+    environment:
+      - BOARD_NAME=raspberrypizero2w
+  
+  rpi3a:
+    <<: *generate_image
+    environment:
+      - BOARD_NAME=raspberrypi3a
+
+  rpi4:
+    <<: *generate_image
+    environment:
+      - BOARD_NAME=raspberrypi4
+
+volumes:
+  dl:
+  output:

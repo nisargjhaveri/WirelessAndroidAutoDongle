@@ -38,17 +38,30 @@ Once you've already tried multiple times and it still does not work, you can ssh
 - Once you're in, try to have a look at `/var/log/messages` file, it should have most relevant logs to start with. You can also copy the file and attach to issues you create if any.
 
 ## Build
-### Start the vagrant box
-```shell
-$ git clone https://github.com/nisargjhaveri/AAWirelessDongle
-$ vagrant up
-$ vagrant ssh
-```
 
-### Setup buildroot environment (inside the VM) and build
+### Clone
 ```shell
 $ git clone --recurse-submodules https://github.com/nisargjhaveri/AAWirelessDongle
-$ cd AAWirelessDongle/buildroot
+```
+
+### Build with Docker
+```shell
+$ docker compose run --rm rpi4 # See docker-compose.yml for available options.
+```
+
+You can use `rpi0w`, `rpi02w`, `rpi3a` or `rpi4` to build and generate an sdcard image. Once the build is successful, it'll copy the generated sdcard image in `images/` directory.
+
+You can also use the `bash` service for more control over the build process and experimentation.
+
+```shell
+$ docker compose run --rm bash
+```
+
+### Build with manual setup
+Once you have a recursive clone, you can manually build using the following set of commands.
+
+```shell
+$ cd buildroot
 $ make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi0w raspberrypi0w_defconfig # Change output and defconfig for your board
 $ cd output/rpi0w
 $ make
