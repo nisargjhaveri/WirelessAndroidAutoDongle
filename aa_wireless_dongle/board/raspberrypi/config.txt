@@ -10,6 +10,8 @@ disable_poe_fan=1
 # Disable overscan assuming the display supports displaying the full resolution
 # If the text shown on the screen disappears off the edge, comment this out
 disable_overscan=1
+# Add the following line if the board need reduce power drain and increase performance disabling hdmi port
+hdmi_blanking=1
 
 # How much memory in MB to assign to the GPU on Pi models having
 # 256, 512 or 1024 MB total memory
