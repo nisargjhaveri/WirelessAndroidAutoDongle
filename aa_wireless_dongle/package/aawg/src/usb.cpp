@@ -77,6 +77,9 @@ void UsbManager::disableGadget() {
     disableGadget(accessoryGadgetName);
 
     Logger::instance()->info("USB Manager: Disabled all USB gadgets\n");
+    
+    enableGadget(defaultGadgetName);
+    Logger::instance()->info("USB Manager: Start default gadget after restart\n");
 }
 
 void UsbManager::enableDefaultAndWaitForAccessroy() {
