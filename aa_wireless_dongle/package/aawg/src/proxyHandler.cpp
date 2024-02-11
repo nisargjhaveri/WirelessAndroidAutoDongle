@@ -112,6 +112,28 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
 void AAWProxy::handleClient(int server_sock) {
     struct sockaddr client_address;
     socklen_t client_addresslen = sizeof(client_address);
+    int rc;
+    struct timeval timeout;
+
+    while (true) {
+      fd_set rfds;
+      timeout.tv_sec  = 30;
+      timeout.tv_usec = 0;
+      
+      FD_ZERO(&rfds);
+      FD_SET(server_sock, &rfds);
+      
+      rc = select(server_sock+1,&rfds,NULL,NULL,&timeout);
+      if (rc == 0) {
+      Logger::instance()->info("Server socket timeout 30s\n");
+      close(server_sock);
+      return; 
+       } 
+      if (rc > 0) { 
+       break;
+      }
+    }
+        
     if ((m_tcp_fd = accept(server_sock, &client_address, &client_addresslen)) < 0) {
         close(server_sock);
         Logger::instance()->info("accept failed: %s\n", strerror(errno));
@@ -138,6 +160,8 @@ void AAWProxy::handleClient(int server_sock) {
     usb_tcp.join();
     tcp_usb.join();
 
+    should_exit = true;
+    
     close(m_usb_fd);
     m_usb_fd = -1;
 
@@ -145,6 +169,8 @@ void AAWProxy::handleClient(int server_sock) {
     m_tcp_fd = -1;
 
     Logger::instance()->info("Forwarding stopped\n");
+    Logger::instance()->info("Restart communication\n");
+    return;
 }
 
 std::optional<std::thread> AAWProxy::startServer(int32_t port) {
@@ -160,7 +186,16 @@ std::optional<std::thread> AAWProxy::startServer(int32_t port) {
         Logger::instance()->info("setsockopt failed: %s\n", strerror(errno));
         return std::nullopt;
     }
-
+    
+    struct timeval tv = {
+        .tv_sec = 30
+    };
+    
+   if (setsockopt(server_sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv))) {
+        Logger::instance()->info("setsockopt failed timeout set: %s\n", strerror(errno));
+        return std::nullopt;
+    }
+    
     struct sockaddr_in address;
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
