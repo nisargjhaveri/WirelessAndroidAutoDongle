@@ -127,6 +127,7 @@ void AAWProxy::handleClient(int server_sock) {
       if (rc == 0) {
       Logger::instance()->info("Server socket timeout 30s\n");
       close(server_sock);
+      close(server_sock+1);
       return; 
        } 
       if (rc > 0) { 
