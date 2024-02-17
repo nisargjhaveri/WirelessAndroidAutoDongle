@@ -112,28 +112,6 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
 void AAWProxy::handleClient(int server_sock) {
     struct sockaddr client_address;
     socklen_t client_addresslen = sizeof(client_address);
-    int rc;
-    struct timeval timeout;
-
-    while (true) {
-      fd_set rfds;
-      timeout.tv_sec  = 30;
-      timeout.tv_usec = 0;
-      
-      FD_ZERO(&rfds);
-      FD_SET(server_sock, &rfds);
-      
-      rc = select(server_sock+1,&rfds,NULL,NULL,&timeout);
-      if (rc == 0) {
-      Logger::instance()->info("Server socket timeout 30s\n");
-      close(server_sock);
-      close(server_sock+1);
-      return; 
-       } 
-      if (rc > 0) { 
-       break;
-      }
-    }
         
     if ((m_tcp_fd = accept(server_sock, &client_address, &client_addresslen)) < 0) {
         close(server_sock);
