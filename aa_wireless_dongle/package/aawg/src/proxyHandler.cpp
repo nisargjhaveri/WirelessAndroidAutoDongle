@@ -112,7 +112,6 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
 void AAWProxy::handleClient(int server_sock) {
     struct sockaddr client_address;
     socklen_t client_addresslen = sizeof(client_address);
-        
     if ((m_tcp_fd = accept(server_sock, &client_address, &client_addresslen)) < 0) {
         close(server_sock);
         Logger::instance()->info("accept failed: %s\n", strerror(errno));
