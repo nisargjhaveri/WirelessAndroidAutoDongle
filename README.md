@@ -75,5 +75,9 @@ Use one of the following defconfig for the board you intend to use:
 - `raspberrypi3a_defconfig` - Raspberry Pi 3A+
 - `raspberrypi4_defconfig` - Raspberry Pi 4
 
+### Enviroment variables
+Can be selected some customs in the file /root/.env
+#HEADUNIT_FIRST=1     // if you uncomment '#HEADUNIT_FIRST=1' , then Connect to usb after before connection is available, in other case then Connect to usb after phone connection is available
+
 ## Limitations
 - Tested with very limited set of headunits and cars. Let me know if it does not work with your headunit.
