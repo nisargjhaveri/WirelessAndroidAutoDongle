@@ -1,4 +1,4 @@
-# AAWirelessDongle
+# Wireless Android Auto Dongle
 
 Use Wireless Android Auto with a car that supports only wired Android Auto using a Raspberry Pi.
 
@@ -19,7 +19,7 @@ The setup should work on any devices with these basic requirements (albeit, with
 Currently tested with multiple Raspberry Pi boards supporting USB OTG.
 
 ## Install and run
-[Download a pre-built sd card image](https://github.com/nisargjhaveri/AAWirelessDongle/releases) or build one as described below. Install the image on the SD card using your favorite tool.
+[Download a pre-built sd card image](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/releases) or build one as described below. Install the image on the SD card using your favorite tool.
 
 You may want to update the `country_code` in the `/etc/hostapd.conf` file.
 
@@ -33,15 +33,15 @@ From the next time, it should automatically connect to your phone, no need to pa
 Once you've already tried multiple times and it still does not work, you can ssh into the device and try to get some logs.
 
 - Connect the device to the headunit, let it boot and try to connect once. The logs are not persisted across reboots, so you need to get the logs in the same instance soon after you observe the issue.
-- Connect to the device using wifi (SSID:AAWirelessDongle, Password: ConnectAAWirelessDongle, see [hostapd.conf](https://github.com/nisargjhaveri/AAWirelessDongle/blob/main/aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)).
-- SSH into the device (username: root, password: password, see relevant defconfigs e.g. [raspberrypi0w_defconfig](https://github.com/nisargjhaveri/AAWirelessDongle/blob/main/aa_wireless_dongle/configs/raspberrypi0w_defconfig)).
+- Connect to the device using wifi (SSID:AAWirelessDongle, Password: ConnectAAWirelessDongle, see [hostapd.conf](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/blob/main/aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)).
+- SSH into the device (username: root, password: password, see relevant defconfigs e.g. [raspberrypi0w_defconfig](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/blob/main/aa_wireless_dongle/configs/raspberrypi0w_defconfig)).
 - Once you're in, try to have a look at `/var/log/messages` file, it should have most relevant logs to start with. You can also copy the file and attach to issues you create if any.
 
 ## Build
 
 ### Clone
 ```shell
-$ git clone --recurse-submodules https://github.com/nisargjhaveri/AAWirelessDongle
+$ git clone --recurse-submodules https://github.com/nisargjhaveri/WirelessAndroidAutoDongle
 ```
 
 ### Build with Docker
