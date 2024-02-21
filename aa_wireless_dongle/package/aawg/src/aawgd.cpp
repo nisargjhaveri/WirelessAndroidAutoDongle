@@ -18,7 +18,8 @@ int main(void) {
     while (true) {
         // Per connection setup and processing
         if (const char* env_p = std::getenv("HEADUNIT_FIRST")) {
-        UsbManager::instance().enableDefaultAndWaitForAccessroy();
+            UsbManager::instance().enableDefaultAndWaitForAccessroy();
+            Logger::instance()->info("Waiting for the accessory to connect first\n");
         }
 
         AAWProxy proxy;
