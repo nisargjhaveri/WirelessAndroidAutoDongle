@@ -17,7 +17,7 @@ int main(void) {
 
     while (true) {
         // Per connection setup and processing
-        if (const char* env_p = std::getenv("HEADUNIT_FIRST")) {
+        if (const char* env_p = std::getenv("AAWG_CONNECTION_WAIT_FOR_ACCESSORY")) {
             UsbManager::instance().enableDefaultAndWaitForAccessroy();
             Logger::instance()->info("Waiting for the accessory to connect first\n");
         }
