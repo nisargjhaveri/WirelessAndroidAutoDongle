@@ -122,12 +122,10 @@ void AAWProxy::handleClient(int server_sock) {
 
     Logger::instance()->info("Tcp server accepted connection\n");
 
-    if (const char* env_p = std::getenv("HEADUNIT_FIRST")) {
-            Logger::instance()->info("Head Unit first connection selected\n");
+    if (const char* env_p = std::getenv("AAWG_CONNECTION_WAIT_FOR_ACCESSORY")) {
     } else {
-            Logger::instance()->info("Phone first connection selected\n");
-            UsbManager::instance().enableDefaultAndWaitForAccessroy();
-        }
+        UsbManager::instance().enableDefaultAndWaitForAccessroy();
+    }
 
 
     Logger::instance()->info("Opening usb accessory\n");
