@@ -41,3 +41,10 @@ jobs:
         name: WirelessAndroidAutoDongle-${{ matrix.defconfig }}
         path: ./buildroot/output/images/${{ matrix.defconfig }}-sdcard.img.xz
   
+  merge:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/upload-artifact/merge@v4
+        with:
+          name: WirelessAndroidAutoDongle-all
