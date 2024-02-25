@@ -126,7 +126,6 @@ void AAWProxy::handleClient(int server_sock) {
         UsbManager::instance().enableDefaultAndWaitForAccessroy();
     }
 
-
     Logger::instance()->info("Opening usb accessory\n");
     if ((m_usb_fd = open("/dev/usb_accessory", O_RDWR)) < 0) {
         Logger::instance()->info("error opening /dev/usb_accessory: %s\n", strerror(errno));
