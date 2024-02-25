@@ -25,7 +25,9 @@ You may want to update the `country_code` in the `/etc/hostapd.conf` file.
 
 That should be it. Insert the SD card and connect the board to the car. Make sure to use a data cable, with the USB OTG enabled port.
 
-Once the car recognizes the device and sends a request to start Android Auto, bluetooth is enabled. On your phone, open Bluetooth settings and pair a new device called "AA Wireless Dongle". Once paired, it should automatically start the Wireless Android Auto on the car screen.
+Connect the device's OTG enabled usb port to car's usb port.
+Once it boots up, open Bluetooth settings and pair a new device called "AA Wireless Dongle" on your phone.
+After this it will try to connect to the car via USB and automatically start the Wireless Android Auto on the car screen.
 
 From the next time, it should automatically connect to your phone, no need to pair again. Make sure your Bluetooth and Wifi are enabled on the phone.
 
