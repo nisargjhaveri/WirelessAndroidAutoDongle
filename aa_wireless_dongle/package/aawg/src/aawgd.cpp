@@ -17,6 +17,11 @@ int main(void) {
 
     while (true) {
         // Per connection setup and processing
+        if (std::getenv("AAWG_CONNECTION_WAIT_FOR_ACCESSORY") != nullptr) {
+            Logger::instance()->info("Waiting for the accessory to connect first\n");
+            UsbManager::instance().enableDefaultAndWaitForAccessroy();
+        }
+
         AAWProxy proxy;
         std::optional<std::thread> proxyThread = proxy.startServer(Config::instance()->getWifiInfo().port);
 
