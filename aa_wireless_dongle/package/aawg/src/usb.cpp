@@ -67,6 +67,7 @@ void UsbManager::disableGadget(std::string gadgetName) {
 
 void UsbManager::switchToAccessoryGadget() {
     disableGadget(defaultGadgetName);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100)); // 0.1 second, keep the gadget disabled for a short time to let the host recognize the change
     enableGadget(accessoryGadgetName);
 
     Logger::instance()->info("USB Manager: Switched to accessory gadget from default\n");
@@ -107,7 +108,6 @@ bool UsbManager::enableDefaultAndWaitForAccessory(std::chrono::milliseconds time
         return true;
     });
 
-    disableGadget(accessoryGadgetName);
     enableGadget(defaultGadgetName);
 
     Logger::instance()->info("USB Manager: Enabled default gadget\n");
