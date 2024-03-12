@@ -140,8 +140,6 @@ void AAWProxy::handleClient(int server_sock) {
     usb_tcp.join();
     tcp_usb.join();
 
-    should_exit = true;
-    
     close(m_usb_fd);
     m_usb_fd = -1;
 
