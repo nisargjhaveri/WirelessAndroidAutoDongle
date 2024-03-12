@@ -79,7 +79,7 @@ void UsbManager::disableGadget() {
     Logger::instance()->info("USB Manager: Disabled all USB gadgets\n");
 }
 
-void UsbManager::enableDefaultAndWaitForAccessroy() {
+void UsbManager::enableDefaultAndWaitForAccessory() {
     std::promise<void> accessoryPromise;
 
     UeventMonitor::instance().addHandler([&accessoryPromise](UeventEnv env) {
