@@ -39,14 +39,18 @@ std::string Config::getMacAddress(std::string interface) {
 
 WifiInfo Config::getWifiInfo() {
     return {
-        getenv("AAWG_WIFI_SSID", "AAWirelessDongle"),
-        getenv("AAWG_WIFI_PASSWORD", "ConnectAAWirelessDongle"),
+        getenv("AAWG_WIFI_SSID", "AndroidAuto"),
+        getenv("AAWG_WIFI_PASSWORD", "1234567890"),
         getenv("AAWG_WIFI_BSSID", getMacAddress("wlan0")),
         SecurityMode::WPA2_PERSONAL,
         AccessPointType::DYNAMIC,
         getenv("AAWG_PROXY_IP_ADDRESS", "10.0.0.1"),
         getenv("AAWG_PROXY_PORT", 5288),
     };
+}
+
+std::string Config::getBtAlias(){
+    return getenv("ADAPTER_ALIAS", "AA Wireless Dongle");
 }
 #pragma endregion Config
 

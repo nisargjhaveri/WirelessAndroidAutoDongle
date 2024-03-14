@@ -4,8 +4,6 @@
 #include "bluetoothHandler.h"
 #include "bluetoothProfiles.h"
 
-static constexpr const char* ADAPTER_ALIAS = "AA Wireless Dongle";
-
 static constexpr const char* BLUEZ_BUS_NAME = "org.bluez";
 static constexpr const char* BLUEZ_ROOT_OBJECT_PATH = "/";
 static constexpr const char* BLUEZ_OBJECT_PATH = "/org/bluez";
@@ -77,7 +75,7 @@ void BluetoothHandler::initAdapter() {
     }
     else {
         m_adapter = BluezAdapterProxy::create(m_connection, adapter_path);
-        m_adapter->alias->set_value(ADAPTER_ALIAS);
+        m_adapter->alias->set_value(Config::instance()->getBtAlias());
     }
 }
 
