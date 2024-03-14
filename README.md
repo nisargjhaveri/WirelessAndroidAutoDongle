@@ -42,7 +42,14 @@ export AAWG_WIFI_SSID=AndroidAuto
 export AAWG_WIFI_PASSWORD=1234567890
 ```
 
-If you change the wifi name, take into account that you would also need to provide a `hostapd.conf` file along with this variables. Again place it in `/boot` and will be moved to the proper location on boot. Use **[this](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)** as an example.
+If you change the wifi name, take into account that you would also need to provide a `hostapd.conf` file along with this variables. Again place it in `/boot` and will be moved to the proper location on boot. Use **[this](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)** as an example:
+```conf
+# /boot/hostapd.conf
+...
+ssid=<change_this>
+wpa_passphrase=<change_this>
+...
+```
 
 ## Troubleshoot
 Once you've already tried multiple times and it still does not work, you can ssh into the device and try to get some logs.
