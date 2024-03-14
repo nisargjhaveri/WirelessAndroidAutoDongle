@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Load kernel modules
+# Load default variables file
 #
 
 case "$1" in
