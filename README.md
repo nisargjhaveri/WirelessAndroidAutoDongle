@@ -31,6 +31,19 @@ After this it will try to connect to the car via USB and automatically start the
 
 From the next time, it should automatically connect to your phone, no need to pair again. Make sure your Bluetooth and Wifi are enabled on the phone.
 
+### Personalization
+A `variables.sh` file can be created on the boot partition to override some of the variables/names used on the system, ie:
+```bash
+# /boot/variables.sh
+# Uncomment this setting to wait for the usb to connect first.
+# By default, we try to connect and wait for the phone to connect first regardless of the usb connection.
+export AAWG_CONNECTION_WAIT_FOR_ACCESSORY=1
+export AAWG_WIFI_SSID=AndroidAuto
+export AAWG_WIFI_PASSWORD=1234567890
+```
+
+If you change the wifi name, take into account that you would also need to provide a `hostapd.conf` file along with this variables. Again place it in `/boot` and will be moved to the proper location on boot. Use **[this](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)** as an example.
+
 ## Troubleshoot
 Once you've already tried multiple times and it still does not work, you can ssh into the device and try to get some logs.
 
