@@ -37,7 +37,7 @@ A `variables.sh` file can be created on the boot partition to override some of t
 # /boot/variables.sh
 # Uncomment this setting to wait for the usb to connect first.
 # By default, we try to connect and wait for the phone to connect first regardless of the usb connection.
-export AAWG_CONNECTION_WAIT_FOR_ACCESSORY=1
+# export AAWG_CONNECTION_WAIT_FOR_ACCESSORY=1
 export AAWG_WIFI_SSID=AndroidAuto
 export AAWG_WIFI_PASSWORD=1234567890
 ```
