@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# Load kernel modules
+#
+
+case "$1" in
+  start)
+	echo "Mounting /boot partition..."
+	mkdir -p /boot
+	mount /dev/mmcblk0p1 /boot
+
+	echo "Copying default variables to /boot if it does not exist..."
+	if [ ! -f "/boot/variables.sh" ]; then
+		cp /etc/variables.sh /boot
+	fi
+	;;
+  *)
+	echo "Usage: $0 {start}"
+	exit 1
+esac
+
+exit $?
