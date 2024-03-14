@@ -12,7 +12,7 @@ RETVAL=0
 case "$1" in
 	start)
 		printf "Starting $DAEMON: "
-		source /boot/variables.sh
+		source /etc/variables.sh
 		start-stop-daemon -S -b -q -m -p "$PIDFILE" -x "/usr/bin/$DAEMON"
 		RETVAL=$?
 		[ $RETVAL = 0 ] && echo "OK" || echo "FAIL"
