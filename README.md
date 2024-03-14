@@ -42,12 +42,12 @@ export AAWG_WIFI_SSID=AndroidAuto
 export AAWG_WIFI_PASSWORD=1234567890
 ```
 
-If you change the wifi name, take into account that you would also need to provide a `hostapd.conf` file along with this variables. Again place it in `/boot` and will be moved to the proper location on boot. Use **[this](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)** as an example:
+If you change the wifi name, take into account that you would also need to provide a `hostapd.conf` file along with this variables. Again place it in `/boot` and will be moved to the proper location on boot. Use **[this](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)** (or **[this](aa_wireless_dongle/board/raspberrypi4/rootfs_overlay/etc/hostapd.conf)** for the PI3a/PI4) as an example:
 ```conf
 # /boot/hostapd.conf
 ...
-ssid=<change_this>
-wpa_passphrase=<change_this>
+ssid=AndroidAuto
+wpa_passphrase=1234567890
 ...
 ```
 
