@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Load default variables file
+# Load personalization from /boot
 #
 
 case "$1" in
@@ -10,9 +10,10 @@ case "$1" in
 	mount /dev/mmcblk0p1 /boot
 
 	echo "Copying default variables to /boot if it does not exist..."
-	if [ ! -f "/boot/variables.sh" ]; then
-		cp /etc/variables.sh /boot
-	fi
+	test -f /boot/variables.sh && mv /boot/variables.sh /etc/variables.sh
+
+	echo "Copying hostapd file from /boot..."
+	test -f /boot/hostapd.conf && mv /boot/hostapd.conf /etc/hostapd.conf
 	;;
   *)
 	echo "Usage: $0 {start}"
