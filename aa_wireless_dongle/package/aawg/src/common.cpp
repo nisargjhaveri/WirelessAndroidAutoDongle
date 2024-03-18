@@ -49,8 +49,8 @@ WifiInfo Config::getWifiInfo() {
     };
 }
 
-std::string Config::getBtAlias(){
-    return getenv("ADAPTER_ALIAS", "AA Wireless Dongle");
+std::string Config::getBtAlias(bool isDongleMode){
+    return isDongleMode ? "AndroidAutoDongle" : getenv("ADAPTER_ALIAS", "AA Wireless Dongle");
 }
 #pragma endregion Config
 

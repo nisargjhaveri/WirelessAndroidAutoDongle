@@ -75,7 +75,7 @@ void BluetoothHandler::initAdapter() {
     }
     else {
         m_adapter = BluezAdapterProxy::create(m_connection, adapter_path);
-        m_adapter->alias->set_value(Config::instance()->getBtAlias());
+        m_adapter->alias->set_value(Config::instance()->getBtAlias(false));
     }
 }
 
