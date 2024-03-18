@@ -5,7 +5,7 @@ public:
     static UsbManager& instance();
 
     void init();
-    void enableDefaultAndWaitForAccessroy();
+    void enableDefaultAndWaitForAccessory();
     void switchToAccessoryGadget();
     void disableGadget();
 

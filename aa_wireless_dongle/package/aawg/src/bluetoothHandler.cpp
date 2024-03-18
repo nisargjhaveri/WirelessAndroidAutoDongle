@@ -15,7 +15,7 @@ static constexpr const char* INTERFACE_BLUEZ_DEVICE = "org.bluez.Device1";
 static constexpr const char* INTERFACE_BLUEZ_PROFILE_MANAGER = "org.bluez.ProfileManager1";
 
 static constexpr const char* AAWG_PROFILE_OBJECT_PATH = "/com/aawgd/bluetooth/aawg";
-static constexpr const char* AAWG_PROfILE_UUID = "4de17a00-52cb-11e6-bdf4-0800200c9a66";
+static constexpr const char* AAWG_PROFILE_UUID = "4de17a00-52cb-11e6-bdf4-0800200c9a66";
 
 static constexpr const char* HSP_HS_PROFILE_OBJECT_PATH = "/com/aawgd/bluetooth/hsp";
 static constexpr const char* HSP_AG_UUID = "00001112-0000-1000-8000-00805f9b34fb";
@@ -110,7 +110,7 @@ void BluetoothHandler::exportProfiles() {
         Logger::instance()->info("Failed to register AA Wireless profile\n");
     }
 
-    registerProfile(AAWG_PROFILE_OBJECT_PATH, AAWG_PROfILE_UUID, {
+    registerProfile(AAWG_PROFILE_OBJECT_PATH, AAWG_PROFILE_UUID, {
         {"Name", DBus::Variant("AA Wireless")},
         {"Role", DBus::Variant("server")},
         {"Channel", DBus::Variant(uint16_t(8))},

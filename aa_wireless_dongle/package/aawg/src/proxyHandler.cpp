@@ -123,7 +123,7 @@ void AAWProxy::handleClient(int server_sock) {
     Logger::instance()->info("Tcp server accepted connection\n");
 
     if (std::getenv("AAWG_CONNECTION_WAIT_FOR_ACCESSORY") == nullptr) {
-        UsbManager::instance().enableDefaultAndWaitForAccessroy();
+        UsbManager::instance().enableDefaultAndWaitForAccessory();
     }
 
     Logger::instance()->info("Opening usb accessory\n");
@@ -132,7 +132,7 @@ void AAWProxy::handleClient(int server_sock) {
         return;
     }
 
-    Logger::instance()->info("Frowarding data between TCP and USB\n");
+    Logger::instance()->info("Forwarding data between TCP and USB\n");
     std::atomic<bool> should_exit = false;
     std::thread usb_tcp(&AAWProxy::forward, this, ProxyDirection::USB_to_TCP, std::ref(should_exit));
     std::thread tcp_usb(&AAWProxy::forward, this, ProxyDirection::TCP_to_USB, std::ref(should_exit));

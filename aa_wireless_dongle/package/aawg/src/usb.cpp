@@ -82,7 +82,7 @@ void UsbManager::disableGadget() {
     Logger::instance()->info("USB Manager: Start default gadget after restart\n");
 }
 
-void UsbManager::enableDefaultAndWaitForAccessroy() {
+void UsbManager::enableDefaultAndWaitForAccessory() {
     std::promise<void> accessoryPromise;
 
     UeventMonitor::instance().addHandler([&accessoryPromise](UeventEnv env) {
