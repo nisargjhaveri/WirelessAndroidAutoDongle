@@ -29,10 +29,16 @@ int main(void) {
             return 1;
         }
 
-        BluetoothHandler::instance().connect();
+        BluetoothHandler::instance().powerOn();
+        std::optional<std::thread> btConnectionThread = BluetoothHandler::instance().connectWithRetry();
 
         proxyThread->join();
-        BluetoothHandler::instance().powerOff();
+
+        if (btConnectionThread) {
+            BluetoothHandler::instance().stopConnectWithRetry();
+            btConnectionThread->join();
+        }
+
         UsbManager::instance().disableGadget();
 
         // sleep for a couple of seconds before retrying

@@ -12,6 +12,7 @@
 
 #include "common.h"
 #include "usb.h"
+#include "bluetoothHandler.h"
 #include "proxyHandler.h"
 
 ssize_t AAWProxy::readFully(int fd, unsigned char *buffer, size_t nbyte) {
@@ -133,6 +134,9 @@ void AAWProxy::handleClient(int server_sock) {
     close(server_sock);
 
     Logger::instance()->info("Tcp server accepted connection\n");
+
+    // Phone connected via TCP, we can stop retrying bluetooth connection
+    BluetoothHandler::instance().stopConnectWithRetry();
 
     if (std::getenv("AAWG_CONNECTION_WAIT_FOR_ACCESSORY") == nullptr) {
         if (!UsbManager::instance().enableDefaultAndWaitForAccessory(std::chrono::seconds(10))) {

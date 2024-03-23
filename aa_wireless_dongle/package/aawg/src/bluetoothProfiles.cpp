@@ -167,8 +167,6 @@ void AAWirelessProfile::NewConnection(DBus::Path path, std::shared_ptr<DBus::Fil
 
     AAWirelessLauncher(fd->descriptor()).launch();
     Logger::instance()->info("Bluetooth launch sequence completed\n");
-
-    BluetoothHandler::instance().powerOff();
 }
 
 void AAWirelessProfile::RequestDisconnection(DBus::Path path) {
