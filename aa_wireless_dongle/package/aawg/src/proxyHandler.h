@@ -22,4 +22,6 @@ private:
 
     int m_usb_fd = -1;
     int m_tcp_fd = -1;
+
+    std::atomic<bool> m_log_communication = false;
 };
