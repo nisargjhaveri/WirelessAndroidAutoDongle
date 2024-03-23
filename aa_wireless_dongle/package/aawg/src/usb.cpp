@@ -79,10 +79,18 @@ void UsbManager::disableGadget() {
     Logger::instance()->info("USB Manager: Disabled all USB gadgets\n");
 }
 
-void UsbManager::enableDefaultAndWaitForAccessory() {
-    std::promise<void> accessoryPromise;
+bool UsbManager::enableDefaultAndWaitForAccessory(std::chrono::milliseconds timeout) {
+    std::shared_ptr<std::promise<void>> accessoryPromise = std::make_shared<std::promise<void>>();
+    std::weak_ptr<std::promise<void>> accessoryPromiseWeak = accessoryPromise;
 
-    UeventMonitor::instance().addHandler([&accessoryPromise](UeventEnv env) {
+    UeventMonitor::instance().addHandler([accessoryPromiseWeak](UeventEnv env) {
+        std::shared_ptr<std::promise<void>> accessoryPromise = accessoryPromiseWeak.lock();
+
+        // If the promise is no longer active, nothing to do.
+        if (!accessoryPromise) {
+            return true;
+        }
+
         if (auto it = env.find("DEVNAME"); it == env.end() || it->second != "usb_accessory") {
             return false;
         }
@@ -94,7 +102,7 @@ void UsbManager::enableDefaultAndWaitForAccessory() {
         // Got an accessory start event
         Logger::instance()->info("USB Manager: Received accessory start request\n");
         UsbManager::instance().switchToAccessoryGadget();
-        accessoryPromise.set_value();
+        accessoryPromise->set_value();
 
         return true;
     });
@@ -104,5 +112,17 @@ void UsbManager::enableDefaultAndWaitForAccessory() {
 
     Logger::instance()->info("USB Manager: Enabled default gadget\n");
 
-    accessoryPromise.get_future().wait();
+    if (timeout == std::chrono::milliseconds(0)) {
+        accessoryPromise->get_future().wait();
+        return true;
+    } else {
+        std::future_status status = accessoryPromise->get_future().wait_for(timeout);
+
+        if (status == std::future_status::ready) {
+            return true;
+        } else {
+            Logger::instance()->info("USB Manager: Timeout waiting for accessory start request\n");
+            return false;
+        }
+    }
 }

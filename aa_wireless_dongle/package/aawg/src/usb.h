@@ -1,11 +1,12 @@
 #include <string>
+#include <chrono>
 
 class UsbManager {
 public:
     static UsbManager& instance();
 
     void init();
-    void enableDefaultAndWaitForAccessory();
+    bool enableDefaultAndWaitForAccessory(std::chrono::milliseconds timeout = std::chrono::milliseconds(0));
     void switchToAccessoryGadget();
     void disableGadget();
 
