@@ -192,7 +192,13 @@ void AAWProxy::handleClient(int server_sock) {
     }
 
     // Setup signal handler
-    signal(SIGUSR1, empty_signal_handler);
+    struct sigaction sa;
+    sa.sa_handler = empty_signal_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    if (sigaction(SIGUSR1, &sa, NULL)) {
+        Logger::instance()->info("Adding signal handler failed: %s\n", strerror(errno));
+    }
 
     Logger::instance()->info("Forwarding data between TCP and USB\n");
     std::atomic<bool> should_exit = false;
