@@ -8,6 +8,7 @@
 class BluezAdapterProxy;
 class AAWirelessProfile;
 class HSPHSProfile;
+class BLEAdvertisement;
 
 class BluetoothHandler {
 public:
@@ -33,6 +34,9 @@ private:
     void exportProfiles();
     void connectDevice();
 
+    void startAdvertising();
+    void stopAdvertising();
+
     void retryConnectLoop();
 
     std::shared_ptr<std::promise<void>> connectWithRetryPromise;
@@ -43,4 +47,8 @@ private:
 
     std::shared_ptr<AAWirelessProfile> m_aawProfile;
     std::shared_ptr<HSPHSProfile> m_hspProfile;
+
+    std::shared_ptr<BLEAdvertisement> m_leAdvertisement;
+
+    std::string m_adapterAlias;
 };
