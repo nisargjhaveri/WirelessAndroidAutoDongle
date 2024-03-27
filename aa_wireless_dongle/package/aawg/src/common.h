@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstdint>
+#include <optional>
 
 enum SecurityMode: int;
 enum AccessPointType: int;
@@ -16,11 +17,18 @@ struct WifiInfo {
     int32_t port;
 };
 
+enum class ConnectionStrategy {
+    DONGLE_MODE = 0,
+    PHONE_FIRST = 1,
+    USB_FIRST = 2
+};
+
 class Config {
 public:
     static Config* instance();
 
     WifiInfo getWifiInfo();
+    ConnectionStrategy getConnectionStrategy();
 private:
     Config() = default;
 
@@ -28,6 +36,8 @@ private:
     std::string getenv(std::string name, std::string defaultValue);
 
     std::string getMacAddress(std::string interface);
+
+    std::optional<ConnectionStrategy> connectionStrategy;
 };
 
 class Logger {

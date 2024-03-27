@@ -15,9 +15,16 @@ int main(void) {
     UsbManager::instance().init();
     BluetoothHandler::instance().init();
 
+    ConnectionStrategy connectionStrategy = Config::instance()->getConnectionStrategy();
+    if (connectionStrategy == ConnectionStrategy::DONGLE_MODE) {
+        BluetoothHandler::instance().powerOn();
+    }
+
     while (true) {
+        Logger::instance()->info("Connection Strategy: %d\n", connectionStrategy);
+
         // Per connection setup and processing
-        if (std::getenv("AAWG_CONNECTION_WAIT_FOR_ACCESSORY") != nullptr) {
+        if (connectionStrategy == ConnectionStrategy::USB_FIRST) {
             Logger::instance()->info("Waiting for the accessory to connect first\n");
             UsbManager::instance().enableDefaultAndWaitForAccessory();
         }
@@ -29,7 +36,10 @@ int main(void) {
             return 1;
         }
 
-        BluetoothHandler::instance().powerOn();
+        if (connectionStrategy != ConnectionStrategy::DONGLE_MODE) {
+            BluetoothHandler::instance().powerOn();
+        }
+
         std::optional<std::thread> btConnectionThread = BluetoothHandler::instance().connectWithRetry();
 
         proxyThread->join();
@@ -41,8 +51,10 @@ int main(void) {
 
         UsbManager::instance().disableGadget();
 
-        // sleep for a couple of seconds before retrying
-        sleep(2);
+        if (connectionStrategy != ConnectionStrategy::DONGLE_MODE) {
+            // sleep for a couple of seconds before retrying
+            sleep(2);
+        }
     }
 
     ueventThread->join();

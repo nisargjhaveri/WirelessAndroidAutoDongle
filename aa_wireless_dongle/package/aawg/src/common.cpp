@@ -48,6 +48,26 @@ WifiInfo Config::getWifiInfo() {
         getenv("AAWG_PROXY_PORT", 5288),
     };
 }
+
+ConnectionStrategy Config::getConnectionStrategy() {
+    if (!connectionStrategy.has_value()) {
+        const int32_t connectionStrategyEnv = getenv("AAWG_CONNECTION_STRATEGY", 0);
+
+        switch (connectionStrategyEnv) {
+            case 1:
+                connectionStrategy = ConnectionStrategy::PHONE_FIRST;
+                break;
+            case 2:
+                connectionStrategy = ConnectionStrategy::USB_FIRST;
+                break;
+            default:
+                connectionStrategy = ConnectionStrategy::DONGLE_MODE;
+                break;
+        }
+    }
+
+    return connectionStrategy.value();
+}
 #pragma endregion Config
 
 #pragma region Logger
