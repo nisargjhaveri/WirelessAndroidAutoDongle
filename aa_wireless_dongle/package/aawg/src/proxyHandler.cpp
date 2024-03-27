@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>
 #include <fcntl.h>
 #include <string.h>
 #include <netinet/in.h>
@@ -14,6 +15,10 @@
 #include "usb.h"
 #include "bluetoothHandler.h"
 #include "proxyHandler.h"
+
+void empty_signal_handler(int signal) {
+    // Empty. We don't want to do anything but interrupt the thread.
+}
 
 ssize_t AAWProxy::readFully(int fd, unsigned char *buffer, size_t nbyte) {
     size_t remaining_bytes = nbyte;
@@ -89,7 +94,9 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
     }
 
     while (!should_exit) {
+        // Read
         ssize_t len = read_message ? readMessage(read_fd, buffer, buffer_len) : read(read_fd, buffer, buffer_len);
+
         if (len <= 0) {
             // Start logging read/write details if there is an error.
             m_log_communication = true;
@@ -97,6 +104,7 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
         if (m_log_communication) {
             Logger::instance()->info("%d bytes read from %s\n", len, read_name.c_str());
         }
+
         if (len < 0) {
             Logger::instance()->info("Read from %s failed: %s\n", read_name.c_str(), strerror(errno));
             break;
@@ -104,8 +112,13 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
         else if (len == 0) {
             break;
         }
+        else if (should_exit) {
+            break;
+        }
 
+        // Write
         ssize_t wlen = write(write_fd, buffer, len);
+
         if (wlen <= 0) {
             // Start logging read/write details if there is an error.
             m_log_communication = true;
@@ -113,13 +126,30 @@ void AAWProxy::forward(ProxyDirection direction, std::atomic<bool>& should_exit)
         if (m_log_communication) {
             Logger::instance()->info("%d bytes written to %s\n", wlen, write_name.c_str());
         }
+
         if (wlen < 0) {
             Logger::instance()->info("Write to %s failed: %s\n", write_name.c_str(), strerror(errno));
             break;
         }
+        else if (should_exit) {
+            break;
+        }
     }
 
+    stopForwarding(should_exit);
+}
+
+void AAWProxy::stopForwarding(std::atomic<bool>& should_exit) {
+    Logger::instance()->info("Interrupting threads to stop forwarding\n");
     should_exit = true;
+
+    if (m_usb_tcp_thread) {
+        pthread_kill(m_usb_tcp_thread->native_handle(), SIGUSR1);
+    }
+
+    if (m_tcp_usb_thread) {
+        pthread_kill(m_tcp_usb_thread->native_handle(), SIGUSR1);
+    }
 }
 
 void AAWProxy::handleClient(int server_sock) {
@@ -150,13 +180,38 @@ void AAWProxy::handleClient(int server_sock) {
         return;
     }
 
+    // Set timeout on the TCP socket
+    struct timeval tv = {
+        .tv_sec = 10,
+        .tv_usec = 0,
+    };
+
+    if (setsockopt(m_tcp_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv))) {
+        Logger::instance()->info("setsockopt failed: %s\n", strerror(errno));
+        return;
+    }
+
+    // Setup signal handler
+    struct sigaction sa;
+    sa.sa_handler = empty_signal_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    if (sigaction(SIGUSR1, &sa, NULL)) {
+        Logger::instance()->info("Adding signal handler failed: %s\n", strerror(errno));
+    }
+
     Logger::instance()->info("Forwarding data between TCP and USB\n");
     std::atomic<bool> should_exit = false;
-    std::thread usb_tcp(&AAWProxy::forward, this, ProxyDirection::USB_to_TCP, std::ref(should_exit));
-    std::thread tcp_usb(&AAWProxy::forward, this, ProxyDirection::TCP_to_USB, std::ref(should_exit));
+    m_usb_tcp_thread = std::thread(&AAWProxy::forward, this, ProxyDirection::USB_to_TCP, std::ref(should_exit));
+    m_tcp_usb_thread = std::thread(&AAWProxy::forward, this, ProxyDirection::TCP_to_USB, std::ref(should_exit));
 
-    usb_tcp.join();
-    tcp_usb.join();
+    m_usb_tcp_thread->join();
+    m_usb_tcp_thread = std::nullopt;
+
+    m_tcp_usb_thread->join();
+    m_tcp_usb_thread = std::nullopt;
+
+    signal(SIGUSR1, SIG_DFL);
 
     close(m_usb_fd);
     m_usb_fd = -1;
