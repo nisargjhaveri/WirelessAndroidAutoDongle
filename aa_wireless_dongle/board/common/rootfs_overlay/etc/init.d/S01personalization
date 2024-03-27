@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# Load personalization from /boot
+#
+
+case "$1" in
+  start)
+	echo "Mounting /boot partition..."
+	mkdir -p /boot
+	mount /dev/mmcblk0p1 /boot
+
+	echo "Copying default variables to /boot if it does not exist..."
+	test -f /boot/variables.sh && mv /boot/variables.sh /etc/variables.sh
+
+	echo "Copying hostapd file from /boot..."
+	test -f /boot/hostapd.conf && mv /boot/hostapd.conf /etc/hostapd.conf
+	;;
+  *)
+	echo "Usage: $0 {start}"
+	exit 1
+esac
+
+exit $?
