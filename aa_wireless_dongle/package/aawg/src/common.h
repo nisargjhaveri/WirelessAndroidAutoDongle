@@ -21,6 +21,8 @@ public:
     static Config* instance();
 
     WifiInfo getWifiInfo();
+
+    std::string getBtAlias(bool isDongleMode);
 private:
     Config() = default;
 

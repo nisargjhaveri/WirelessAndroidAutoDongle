@@ -48,6 +48,10 @@ WifiInfo Config::getWifiInfo() {
         getenv("AAWG_PROXY_PORT", 5288),
     };
 }
+
+std::string Config::getBtAlias(bool isDongleMode){
+    return isDongleMode ? "AndroidAutoDongle" : getenv("ADAPTER_ALIAS", "AA Wireless Dongle");
+}
 #pragma endregion Config
 
 #pragma region Logger
