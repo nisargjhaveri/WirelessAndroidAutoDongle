@@ -17,6 +17,7 @@ PIDFILE="/var/run/$DAEMON.pid"
 RETVAL=0
 
 start() {
+	printf "Setting up usb_gadgets: "
 	mountpoint -q /sys/kernel/config || mount -t configfs none /sys/kernel/config
 
 	# Setup accessory config
@@ -53,7 +54,10 @@ start() {
 		ln -s functions/ffs.mtp configs/c.1
 	fi
 
-	# Mount FunctionFS and start uMTPrd
+	# Setting up usb_gadget:
+	echo "OK"
+
+	printf "Starting $DAEMON: "
 	if [ ! -f "$FUNCTIONFS_PATH" ]; then
 		mkdir "$FUNCTIONFS_PATH"
 	fi
@@ -61,21 +65,24 @@ start() {
 	start-stop-daemon -S -b -q -m -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
 	RETVAL=$?
 	sleep 1
-
-	logger -s -p INFO -t usb_gadget Enabled default usb gadget
+	[ $RETVAL = 0 ] && echo "OK" || echo "FAIL"
 }
 
 stop() {
+	printf "Disabe usb_gadgets: "
 	cd /sys/kernel/config/usb_gadget
 	echo "" > "$ACCESSORY_GADGET_NAME"/UDC
 	echo "" > "$DEFAULT_GADGET_NAME"/UDC
 
+	# Disabe usb_gadget:
+	echo "OK"
+
+	printf "Stopping $DAEMON: "
 	start-stop-daemon -K -q -s 9 -p "$PIDFILE"
 	RETVAL=$?
 	umount "$FUNCTIONFS_PATH"
 	rm -r "$FUNCTIONFS_PATH"
-
-	logger -s -p INFO -t usb_gadget Disabled usb gadget
+	[ $RETVAL = 0 ] && echo "OK" || echo "FAIL"
 }
 
 restart() {
