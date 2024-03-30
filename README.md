@@ -11,25 +11,28 @@ This repository consists of the buildroot setup to generate an sd card image to 
 - Supports multiple boards (Currently multiple Raspberry Pi boards).
 
 ## Supported Hardware
-The setup should work on any devices with these basic requirements (albeit, with some modifications).
+This is currently tested and built for multiple Raspberry Pi boards supporting USB OTG.
+
+The setup should technically work on any devices with these basic requirements (albeit, with some modifications).
 - The board should support USB OTG or Gadget mode.
 - Has Wifi and Bluetooth. External should also work if not in-built.
 - Should be able to operate on power provided by the car.
-
-Currently tested with multiple Raspberry Pi boards supporting USB OTG.
 
 ## Install and run
 [Download a pre-built sd card image](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/releases) or build one as described below. Install the image on the SD card using your favorite tool.
 
 You may want to update the `country_code` in the `/etc/hostapd.conf` file.
 
-That should be it. Insert the SD card and connect the board to the car. Make sure to use a data cable, with the USB OTG enabled port.
+### First-time connection
+- Connect the phone to headunit via USB cable, make sure Android Auto starts. Disconnect phone.
+- Connect the board to the car. Make sure to use a data cable, with the USB OTG enabled port on the board.
+- Open Bluetooth settings and pair the new device called "AndroidAuto-Dongle" or "AA Wireless Dongle" on your phone.
+- After this phone should automatically connect via Wifi and the dongle will connect to the headunit via USB and start Android Auto on the car screen.
 
-Connect the device's OTG enabled usb port to car's usb port.
-Once it boots up, open Bluetooth settings and pair a new device called "AA Wireless Dongle" on your phone.
-After this it will try to connect to the car via USB and automatically start the Wireless Android Auto on the car screen.
+### Subsequent connections
+From the next time, it should automatically connect to the phone and start Android Auto.
 
-From the next time, it should automatically connect to your phone, no need to pair again. Make sure your Bluetooth and Wifi are enabled on the phone.
+Make sure your Bluetooth and Wifi are enabled on the phone.
 
 ## Troubleshoot
 Once you've already tried multiple times and it still does not work, you can ssh into the device and try to get some logs.
