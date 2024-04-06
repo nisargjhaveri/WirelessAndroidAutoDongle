@@ -80,6 +80,14 @@ void UsbManager::disableGadget() {
     Logger::instance()->info("USB Manager: Disabled all USB gadgets\n");
 }
 
+void UsbManager::delayStartUp(int delay){
+    Logger::instance()->info("USB Manager: Delaying start up for %d minutes before starting enabling USB gagdets.\n", startUpDelayMinutes);
+    disableGadget();
+    sleep(delay * 60);
+    Logger::instance()->info("USB Manager: Start up delay complete, enabling USB gadgets\n");
+    enableGadget(accessoryGadgetName);
+}
+
 bool UsbManager::enableDefaultAndWaitForAccessory(std::chrono::milliseconds timeout) {
     std::shared_ptr<std::promise<void>> accessoryPromise = std::make_shared<std::promise<void>>();
     std::weak_ptr<std::promise<void>> accessoryPromiseWeak = accessoryPromise;

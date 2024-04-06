@@ -29,6 +29,7 @@ public:
 
     WifiInfo getWifiInfo();
     ConnectionStrategy getConnectionStrategy();
+    int getStartUpMinuteDelay();
 private:
     Config() = default;
 

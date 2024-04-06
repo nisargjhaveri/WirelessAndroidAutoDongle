@@ -16,6 +16,12 @@ int main(void) {
     BluetoothHandler::instance().init();
 
     ConnectionStrategy connectionStrategy = Config::instance()->getConnectionStrategy();
+    int startUpDelayMinutes = Config::instance()->getStartUpMinuteDelay();
+    
+    if (startUpDelayMinutes > 0) {
+        UsbManager::instance().delayStartUp(startUpDelayMinutes);
+    }
+    
     if (connectionStrategy == ConnectionStrategy::DONGLE_MODE) {
         BluetoothHandler::instance().powerOn();
     }

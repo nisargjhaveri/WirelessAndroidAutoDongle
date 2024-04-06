@@ -68,6 +68,12 @@ ConnectionStrategy Config::getConnectionStrategy() {
 
     return connectionStrategy.value();
 }
+
+int Config::getStartUpMinuteDelay()
+{
+    return getenv("AAWG_START_UP_MINUTE_DELAY", 0);
+}
+
 #pragma endregion Config
 
 #pragma region Logger
