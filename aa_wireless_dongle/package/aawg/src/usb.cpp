@@ -83,7 +83,7 @@ void UsbManager::disableGadget() {
 void UsbManager::delayStartUp(int delay){
     Logger::instance()->info("USB Manager: Delaying start up for %d minutes before starting enabling USB gagdets.\n", delay);
     disableGadget();
-    sleep(delay * 60);
+    std::this_thread::sleep_for(std::chrono::milliseconds(delay * 60 * 1000));
     Logger::instance()->info("USB Manager: Start up delay complete, enabling USB gadgets\n");
     enableGadget(accessoryGadgetName);
 }
