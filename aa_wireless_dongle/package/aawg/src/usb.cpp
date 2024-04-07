@@ -22,8 +22,15 @@ void UsbManager::init() {
 
 UsbManager::UsbManager() {
     Logger::instance()->info("Initializing USB Manager\n");
+    int startUpDelayMinutes = Config::instance()->getStartUpMinuteDelay();
 
     disableGadget();
+
+    if (startUpDelayMinutes > 0) {
+        Logger::instance()->info("USB Manager: Delaying start up for %d minutes before starting enabling USB gagdets.\n", startUpDelayMinutes);
+        std::this_thread::sleep_for(std::chrono::milliseconds(startUpDelayMinutes * 60 * 1000));
+        Logger::instance()->info("USB Manager: Start up delay complete, enabling USB gadgets\n");
+    }
 
     DIR* dirSysClassUdc = opendir("/sys/class/udc/");
     if (dirSysClassUdc == NULL) {
@@ -78,14 +85,6 @@ void UsbManager::disableGadget() {
     disableGadget(accessoryGadgetName);
 
     Logger::instance()->info("USB Manager: Disabled all USB gadgets\n");
-}
-
-void UsbManager::delayStartUp(int delay){
-    Logger::instance()->info("USB Manager: Delaying start up for %d minutes before starting enabling USB gagdets.\n", delay);
-    disableGadget();
-    std::this_thread::sleep_for(std::chrono::milliseconds(delay * 60 * 1000));
-    Logger::instance()->info("USB Manager: Start up delay complete, enabling USB gadgets\n");
-    enableGadget(accessoryGadgetName);
 }
 
 bool UsbManager::enableDefaultAndWaitForAccessory(std::chrono::milliseconds timeout) {
