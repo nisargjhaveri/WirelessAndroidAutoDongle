@@ -69,9 +69,9 @@ ConnectionStrategy Config::getConnectionStrategy() {
     return connectionStrategy.value();
 }
 
-int Config::getStartUpMinuteDelay()
+int Config::getUsbStartUpDelaySeconds()
 {
-    return getenv("AAWG_START_UP_MINUTE_DELAY", 0);
+    return getenv("AAWG_USB_START_UP_DELAY_SECONDS", 0);
 }
 
 #pragma endregion Config
