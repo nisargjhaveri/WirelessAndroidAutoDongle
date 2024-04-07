@@ -9,7 +9,7 @@ public:
     bool enableDefaultAndWaitForAccessory(std::chrono::milliseconds timeout = std::chrono::milliseconds(0));
     void switchToAccessoryGadget();
     void disableGadget();
-    
+
 private:
     UsbManager();
     UsbManager(UsbManager const&);
