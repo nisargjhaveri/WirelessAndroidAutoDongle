@@ -22,13 +22,13 @@ void UsbManager::init() {
 
 UsbManager::UsbManager() {
     Logger::instance()->info("Initializing USB Manager\n");
-    int UsbStartUpDelaySeconds = Config::instance()->getUsbStartUpDelaySeconds();
+    int usbStartUpDelaySeconds = Config::instance()->getUsbStartUpDelaySeconds();
 
     disableGadget();
 
-    if (UsbStartUpDelaySeconds > 0) {
-        Logger::instance()->info("USB Manager: Delaying start up for %d seconds before starting enabling USB gagdets.\n", UsbStartUpDelaySeconds);
-        std::this_thread::sleep_for(std::chrono::milliseconds(startUpDelayMinutes * 1000));
+    if (usbStartUpDelaySeconds > 0) {
+        Logger::instance()->info("USB Manager: Delaying start up for %d seconds before starting enabling USB gagdets.\n", usbStartUpDelaySeconds);
+        std::this_thread::sleep_for(std::chrono::milliseconds(usbStartUpDelaySeconds * 1000));
         Logger::instance()->info("USB Manager: Start up delay complete, enabling USB gadgets\n");
     }
 

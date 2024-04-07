@@ -15,7 +15,7 @@ int main(void) {
     UsbManager::instance().init();
     BluetoothHandler::instance().init();
 
-    ConnectionStrategy connectionStrategy = Config::instance()->getConnectionStrategy();    
+    ConnectionStrategy connectionStrategy = Config::instance()->getConnectionStrategy();
     if (connectionStrategy == ConnectionStrategy::DONGLE_MODE) {
         BluetoothHandler::instance().powerOn();
     }
