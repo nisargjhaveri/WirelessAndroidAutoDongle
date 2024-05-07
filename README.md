@@ -54,7 +54,7 @@ $ git clone --recurse-submodules https://github.com/nisargjhaveri/WirelessAndroi
 $ docker compose run --rm rpi4 # See docker-compose.yml for available options.
 ```
 
-You can use `rpi0w`, `rpi02w`, `rpi3a` or `rpi4` to build and generate an sdcard image. Once the build is successful, it'll copy the generated sdcard image in `images/` directory.
+You can use `rpi0w`, `rpi02w`, `rpi3a`, `rpi4` or `cm4` to build and generate an sdcard image. Once the build is successful, it'll copy the generated sdcard image in `images/` directory.
 
 You can also use the `bash` service for more control over the build process and experimentation.
 

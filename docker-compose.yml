@@ -34,6 +34,11 @@ services:
     <<: *generate_image
     environment:
       - BOARD_NAME=raspberrypi4
+    
+  cm4:
+    <<: *generate_image
+    environment:
+      - BOARD_NAME=raspberrypicm4
 
 volumes:
   dl:
