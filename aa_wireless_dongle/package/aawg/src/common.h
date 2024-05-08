@@ -29,6 +29,7 @@ public:
 
     WifiInfo getWifiInfo();
     ConnectionStrategy getConnectionStrategy();
+    int32_t getUsbAccesoryTimeout();
 private:
     Config() = default;
 

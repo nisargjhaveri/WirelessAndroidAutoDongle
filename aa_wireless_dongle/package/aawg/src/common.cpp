@@ -49,6 +49,10 @@ WifiInfo Config::getWifiInfo() {
     };
 }
 
+int32_t Config::getUsbAccesoryTimeout(){
+    return getenv("AAWG_WAIT_FOR_ACCESORY", 10);
+}
+
 ConnectionStrategy Config::getConnectionStrategy() {
     if (!connectionStrategy.has_value()) {
         const int32_t connectionStrategyEnv = getenv("AAWG_CONNECTION_STRATEGY", 0);

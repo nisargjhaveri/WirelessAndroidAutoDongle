@@ -169,7 +169,8 @@ void AAWProxy::handleClient(int server_sock) {
     BluetoothHandler::instance().stopConnectWithRetry();
 
     if (Config::instance()->getConnectionStrategy() != ConnectionStrategy::USB_FIRST) {
-        if (!UsbManager::instance().enableDefaultAndWaitForAccessory(std::chrono::seconds(10))) {
+        const int32_t timeout = Config::instance()->getUsbAccesoryTimeout();
+        if (!UsbManager::instance().enableDefaultAndWaitForAccessory(std::chrono::seconds(timeout))) {
             return;
         }
     }
