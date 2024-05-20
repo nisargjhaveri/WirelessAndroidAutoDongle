@@ -230,7 +230,7 @@ void BluetoothHandler::retryConnectLoop() {
     while (!should_exit) {
         connectDevice();
 
-        if (connectWithRetryFuture.wait_for(std::chrono::seconds(10)) == std::future_status::ready) {
+        if (connectWithRetryFuture.wait_for(std::chrono::seconds(20)) == std::future_status::ready) {
             should_exit = true;
             connectWithRetryPromise = nullptr;
         }
