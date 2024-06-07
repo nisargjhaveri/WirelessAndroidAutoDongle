@@ -51,9 +51,12 @@ WifiInfo Config::getWifiInfo() {
 
 ConnectionStrategy Config::getConnectionStrategy() {
     if (!connectionStrategy.has_value()) {
-        const int32_t connectionStrategyEnv = getenv("AAWG_CONNECTION_STRATEGY", 0);
+        const int32_t connectionStrategyEnv = getenv("AAWG_CONNECTION_STRATEGY", 1);
 
         switch (connectionStrategyEnv) {
+            case 0:
+                connectionStrategy = ConnectionStrategy::DONGLE_MODE;
+                break;
             case 1:
                 connectionStrategy = ConnectionStrategy::PHONE_FIRST;
                 break;
@@ -61,7 +64,7 @@ ConnectionStrategy Config::getConnectionStrategy() {
                 connectionStrategy = ConnectionStrategy::USB_FIRST;
                 break;
             default:
-                connectionStrategy = ConnectionStrategy::DONGLE_MODE;
+                connectionStrategy = ConnectionStrategy::PHONE_FIRST;
                 break;
         }
     }
