@@ -42,6 +42,48 @@ Once you've already tried multiple times and it still does not work, you can ssh
 - SSH into the device (username: root, password: password, see relevant defconfigs e.g. [raspberrypi0w_defconfig](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/blob/main/aa_wireless_dongle/configs/raspberrypi0w_defconfig)).
 - Once you're in, try to have a look at `/var/log/messages` file, it should have most relevant logs to start with. You can also copy the file and attach to issues you create if any.
 
+## Hardening / making system read-only
+Sometimes it is desirable (because of SD cards longevity) to make a whole system read-only. This would also help because we don't have any control when the car headunit is powering off the dongle (USB port).<br>
+In some corner cases the filesystem could be damaged because the system is not properly shutdown and unmounted.
+
+When you have the dongle set up properly and it is working as intended (you was connecting with your phone to the car, BT was paired, AA is working) you can make the following changes in the SD card:
+
+_Partition #1 (boot):_<br>
+edit the `cmdline.txt` file and add `ro` at the end of the line
+
+_Partition #2 (main filesystem):_
+```diff
+--- old/etc/fstab	2024-03-30 17:44:15.000000000 +0100
++++ new/etc/fstab	2024-05-03 16:33:48.083059982 +0200
+@@ -1,5 +1,5 @@
+ # <file system>	<mount pt>	<type>	<options>	<dump>	<pass>
+-/dev/root	/		ext2	rw,noauto	0	1
++/dev/root	/		ext2	ro,noauto	0	1
+ proc		/proc		proc	defaults	0	0
+ devpts		/dev/pts	devpts	defaults,gid=5,mode=620,ptmxmode=0666	0	0
+ tmpfs		/dev/shm	tmpfs	mode=0777	0	0
+diff -Nru 22/etc/inittab pizero-aa-backup/p2/etc/inittab
+--- old/etc/inittab	2024-03-30 18:57:51.000000000 +0100
++++ new/etc/inittab	2024-05-03 16:45:24.184119996 +0200
+@@ -15,7 +15,7 @@
+ 
+ # Startup the system
+ ::sysinit:/bin/mount -t proc proc /proc
+-::sysinit:/bin/mount -o remount,rw /
++#::sysinit:/bin/mount -o remount,rw /
+ ::sysinit:/bin/mkdir -p /dev/pts /dev/shm
+ ::sysinit:/bin/mount -a
+ ::sysinit:/bin/mkdir -p /run/lock/subsys
+```
+
+Again: before doing this, make sure that you've connect your phone at least once and all is working fine, specifically the `/var/lib/bluetooth/` directory is populated with your phone pairing information.<br>
+This way after reboot all partitions will stay in read-only mode and should work longer and without possible problems.
+
+If you want to make some changes to the filesystem or pair new phone you should revert those changes and it will be read-write again.<br>
+It should be also possible to `ssh` and execute:<br>
+`mount -o remount,rw /`<br>
+to make root filesystem read-write again temporarily.
+
 ## Build
 
 ### Clone
