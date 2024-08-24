@@ -8,7 +8,7 @@
 #include "usb.h"
 
 int main(void) {
-    Logger::instance()->info("AA Wireless Dongle\n");
+    Logger::instance()->info("PhewwwAutoBT\n");
 
     // Global init
     std::optional<std::thread> ueventThread =  UeventMonitor::instance().start();
