@@ -1,12 +1,17 @@
 #include <stdio.h>
+#include <cstdlib>
 
 #include "common.h"
 #include "bluetoothHandler.h"
 #include "bluetoothProfiles.h"
 #include "bluetoothAdvertisement.h"
 
-static constexpr const char* ADAPTER_ALIAS = "AA Wireless Dongle";
-static constexpr const char* ADAPTER_ALIAS_DONGLE = "AndroidAuto-Dongle";
+
+const char* envValue = std::getenv("ADAPTER_ALIAS");
+const char* ADAPTER_ALIAS = envValue != nullptr ? envValue : "AA Wireless Dongle";
+
+const char* envValue2 = std::getenv("ADAPTER_ALIAS_DONGLE");
+const char* ADAPTER_ALIAS_DONGLE = envValue != nullptr ? envValue2 : "Android Auto Dongle";
 
 static constexpr const char* BLUEZ_BUS_NAME = "org.bluez";
 static constexpr const char* BLUEZ_ROOT_OBJECT_PATH = "/";
