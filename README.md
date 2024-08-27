@@ -1,8 +1,8 @@
 # Wireless Android Auto Dongle
 
-Use Wireless Android Auto with a car that supports only wired Android Auto using a Raspberry Pi.
+DIY Wireless Android Auto adapter to use with a car that supports only wired Android Auto using a Raspberry Pi.
 
-This repository consists of the buildroot setup to generate an sd card image to create your own Wireless Android Auto Dongle.
+This repository consists of the buildroot setup to generate an sd card image to create your own Wireless Android Auto adapter.
 
 ## Features
 - Native Wireless Android Auto connection to the phone, no extra app needed on the phone.
@@ -11,21 +11,29 @@ This repository consists of the buildroot setup to generate an sd card image to 
 - Supports multiple boards (Currently multiple Raspberry Pi boards).
 
 ## Supported Hardware
-This is currently tested and built for multiple Raspberry Pi boards supporting USB OTG.
+This is currently tested and built for the following Raspberry Pi boards supporting USB OTG.
+- **Raspberry Pi Zero W**
+- **Raspberry Pi Zero 2 W**
+- **Raspberry Pi 3 A+** _(Raspberry Pi 3 B+ is not supported)_
+- **Raspberry Pi 4**
 
-The setup should technically work on any devices with these basic requirements (albeit, with some modifications).
+In theory, this can be extended to more hardware in future with these basic requirements.
+
 - The board should support USB OTG or Gadget mode.
 - Has Wifi and Bluetooth. External should also work if not in-built.
 - Should be able to operate on power provided by the car.
 
 ## Install and run
-[Download a pre-built sd card image](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/releases) or build one as described below. Install the image on the SD card using your favorite tool.
+[Download a pre-built sd card image](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/releases) for your board. You can also [build one yourself](BUILDING.md). Install the image on the SD card using your favorite tool.
 
 You may want to update the `country_code` in the `/etc/hostapd.conf` file.
 
 ### First-time connection
 - Connect the phone to headunit via USB cable, make sure Android Auto starts. Disconnect phone.
 - Connect the board to the car. Make sure to use a data cable, with the USB OTG enabled port on the board.
+    - On **Raspberry Pi Zero W** and **Raspberry Pi Zero 2 W**: Use the second micro-usb port marked "USB" and not "PWR".
+    - On **Raspberry Pi 3 A+**: Use the only USB-A port with an USB-A to USB-A cable.
+    - On **Raspberry Pi 4**, use the USB-C port user for normally powering the board.
 - Open Bluetooth settings and pair the new device called "AndroidAuto-Dongle" or "AA Wireless Dongle" on your phone.
 - After this phone should automatically connect via Wifi and the dongle will connect to the headunit via USB and start Android Auto on the car screen.
 
@@ -35,50 +43,31 @@ From the next time, it should automatically connect to the phone and start Andro
 Make sure your Bluetooth and Wifi are enabled on the phone.
 
 ## Troubleshoot
+
+### Common issues
+
+#### Bluetooth and Wifi seems connected, but the phone stuck at "Looking for Android Auto"
+The most common issue behind this is either bad USB cable or use of wrong USB port on the device. Make sure:
+1. The cable is good quality data cable and not power-only cable
+2. You're using the OTG enabled usb port on the board, and not the power-only port.
+
+### Getting logs
 Once you've already tried multiple times and it still does not work, you can ssh into the device and try to get some logs.
 
 - Connect the device to the headunit, let it boot and try to connect once. The logs are not persisted across reboots, so you need to get the logs in the same instance soon after you observe the issue.
-- Connect to the device using wifi (SSID:AAWirelessDongle, Password: ConnectAAWirelessDongle, see [hostapd.conf](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/blob/main/aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)).
-- SSH into the device (username: root, password: password, see relevant defconfigs e.g. [raspberrypi0w_defconfig](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/blob/main/aa_wireless_dongle/configs/raspberrypi0w_defconfig)).
+- Connect to the device using wifi (SSID:AAWirelessDongle, Password: ConnectAAWirelessDongle, see [hostapd.conf](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)).
+- SSH into the device (username: root, password: password, see relevant defconfigs e.g. [raspberrypi0w_defconfig](aa_wireless_dongle/configs/raspberrypi0w_defconfig)).
 - Once you're in, try to have a look at `/var/log/messages` file, it should have most relevant logs to start with. You can also copy the file and attach to issues you create if any.
 
-## Build
+## Contribute
+[Find or create a new issue](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/issues) for any bugs or improvements.
 
-### Clone
-```shell
-$ git clone --recurse-submodules https://github.com/nisargjhaveri/WirelessAndroidAutoDongle
-```
+Feel free to [Create a PR](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/pulls) to fix any issues. Refer [BUILDING.md](BUILDING.md) for instructions on how to build locally.
 
-### Build with Docker
-```shell
-$ docker compose run --rm rpi4 # See docker-compose.yml for available options.
-```
+## Support 
+Please [consider sponsoring](https://github.com/sponsors/nisargjhaveri) if you find the project useful. Even a small donation helps. This will help continuing fixing issues and getting support for more devices and headunit in future.
 
-You can use `rpi0w`, `rpi02w`, `rpi3a` or `rpi4` to build and generate an sdcard image. Once the build is successful, it'll copy the generated sdcard image in `images/` directory.
-
-You can also use the `bash` service for more control over the build process and experimentation.
-
-```shell
-$ docker compose run --rm bash
-```
-
-### Build with manual setup
-Once you have a recursive clone, you can manually build using the following set of commands.
-
-```shell
-$ cd buildroot
-$ make BR2_EXTERNAL=../aa_wireless_dongle/ O=output/rpi0w raspberrypi0w_defconfig # Change output and defconfig for your board
-$ cd output/rpi0w
-$ make
-```
-
-When successful, this should generate the sd card image at `images/sdcard.img` in your output directory. See the "Install and Run" instructions above to use this image.
-
-Use one of the following defconfig for the board you intend to use:
-- `raspberrypi0w_defconfig` - Raspberry Pi Zero W
-- `raspberrypizero2w_defconfig` - Raspberry Pi Zero 2 W
-- `raspberrypi3a_defconfig` - Raspberry Pi 3A+
-- `raspberrypi4_defconfig` - Raspberry Pi 4
+In any case, don't forget to star on github and spread the word if you think this project might be useful to someone else as well.
 
 ## Limitations
-- Tested with very limited set of headunits and cars. Let me know if it does not work with your headunit.
+This is currently tested with very limited set of headunits and cars. Let me know if it does not work with your headunit.
