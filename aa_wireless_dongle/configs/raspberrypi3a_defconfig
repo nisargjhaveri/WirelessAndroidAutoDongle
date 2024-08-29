@@ -21,7 +21,7 @@ BR2_LINUX_KERNEL_DTS_SUPPORT=y
 BR2_LINUX_KERNEL_INTREE_DTS_NAME="bcm2710-rpi-3-b bcm2710-rpi-3-b-plus bcm2710-rpi-cm3"
 
 # Rootfs overlay
-BR2_ROOTFS_OVERLAY="$(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/board/common/rootfs_overlay $(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/board/raspberrypi4/rootfs_overlay"
+BR2_ROOTFS_OVERLAY="$(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/board/common/rootfs_overlay $(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/board/raspberrypi/rootfs_overlay $(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/board/raspberrypi4/rootfs_overlay"
 BR2_GLOBAL_PATCH_DIR="$(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/patches"
 
 # Enable compressed kernel module support
@@ -72,9 +72,10 @@ BR2_TARGET_GENERIC_ROOT_PASSWD="password"
 # BR2_TARGET_GENERIC_GETTY is not set
 
 # Filesystem / image
+BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW=n
 BR2_TARGET_ROOTFS_EXT2=y
 BR2_TARGET_ROOTFS_EXT2_4=y
-BR2_TARGET_ROOTFS_EXT2_SIZE="120M"
+BR2_TARGET_ROOTFS_EXT2_SIZE="80M"
 # BR2_TARGET_ROOTFS_TAR is not set
 BR2_ROOTFS_POST_BUILD_SCRIPT="board/raspberrypi3/post-build.sh"
-BR2_ROOTFS_POST_IMAGE_SCRIPT="board/raspberrypi3/post-image.sh"
+BR2_ROOTFS_POST_IMAGE_SCRIPT="$(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/board/raspberrypi/post-image.sh"
