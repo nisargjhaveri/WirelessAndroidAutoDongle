@@ -5,8 +5,8 @@
 #include "bluetoothProfiles.h"
 #include "bluetoothAdvertisement.h"
 
-static constexpr const char* ADAPTER_ALIAS = "AA Wireless Dongle";
-static constexpr const char* ADAPTER_ALIAS_DONGLE = "AndroidAuto-Dongle";
+static constexpr const char* ADAPTER_ALIAS_PREFIX = "WirelessAADongle-";
+static constexpr const char* ADAPTER_ALIAS_DONGLE_PREFIX = "AndroidAuto-Dongle-";
 
 static constexpr const char* BLUEZ_BUS_NAME = "org.bluez";
 static constexpr const char* BLUEZ_ROOT_OBJECT_PATH = "/";
@@ -90,6 +90,7 @@ void BluetoothHandler::initAdapter() {
     else {
         m_adapter = BluezAdapterProxy::create(m_connection, adapter_path);
         m_adapter->alias->set_value(m_adapterAlias);
+        Logger::instance()->info("Bluetooth adapter alias: %s\n", m_adapterAlias.c_str());
     }
 }
 
@@ -248,7 +249,9 @@ void BluetoothHandler::init() {
     m_dispatcher = DBus::StandaloneDispatcher::create();
     m_connection = m_dispatcher->create_connection( DBus::BusType::SYSTEM );
 
-    m_adapterAlias = (Config::instance()->getConnectionStrategy() == ConnectionStrategy::DONGLE_MODE) ? ADAPTER_ALIAS_DONGLE : ADAPTER_ALIAS;
+    std::string adapterAliasPrefix = (Config::instance()->getConnectionStrategy() == ConnectionStrategy::DONGLE_MODE) ? ADAPTER_ALIAS_DONGLE_PREFIX : ADAPTER_ALIAS_PREFIX;
+
+    m_adapterAlias = adapterAliasPrefix + Config::instance()->getUniqueSuffix();
 
     initAdapter();
     exportProfiles();

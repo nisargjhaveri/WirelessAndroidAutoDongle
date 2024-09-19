@@ -37,6 +37,23 @@ std::string Config::getMacAddress(std::string interface) {
     return macAddress;
 }
 
+std::string Config::getUniqueSuffix() {
+    std::string uniqueSuffix = getenv("AAWG_UNIQUE_NAME_SUFFIX", "");
+    if (!uniqueSuffix.empty()) {
+        return uniqueSuffix;
+    }
+
+    std::ifstream serialNumberFile("/sys/firmware/devicetree/base/serial-number");
+
+    std::string serialNumber;
+    getline(serialNumberFile, serialNumber);
+
+    // Removing trailing null from serialNumber, pad at the beginning
+    serialNumber = std::string("00000000") + serialNumber.c_str();
+
+    return serialNumber.substr(serialNumber.size() - 6);
+}
+
 WifiInfo Config::getWifiInfo() {
     return {
         getenv("AAWG_WIFI_SSID", "AAWirelessDongle"),
