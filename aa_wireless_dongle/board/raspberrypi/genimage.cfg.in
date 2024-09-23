@@ -2,7 +2,7 @@ image boot.vfat {
 	vfat {
 		label = "WirelessAA"
 		files = {
-			"aawgd.env",
+			"aawgd.conf.sh",
 #BOOT_FILES#
 		}
 	}
