@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 
 #include "common.h"
 #include "bluetoothHandler.h"
@@ -97,6 +98,12 @@ void BluetoothHandler::initAdapter() {
 void BluetoothHandler::setPower(bool on) {
     if (!m_adapter) {
         return;
+    }
+
+    // wait up to 10 seconds if BT stack is not ready
+    int i = 10;
+    while (i-- && !m_adapter->powered->value()) {
+        sleep(1);
     }
 
     m_adapter->powered->set_value(on);
