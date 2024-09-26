@@ -107,7 +107,7 @@ void BluetoothHandler::setPower(bool on) {
     }
 
     m_adapter->powered->set_value(on);
-    Logger::instance()->info("Bluetooth adapter was powered %s\n", on ? "on" : "off");
+    Logger::instance()->info("Bluetooth adapter powered %s\n", on ? "on" : "off");
 }
 
 void BluetoothHandler::setPairable(bool pairable) {
