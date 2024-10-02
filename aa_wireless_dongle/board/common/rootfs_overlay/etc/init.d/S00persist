@@ -4,14 +4,14 @@
 #
 
 case "$1" in
-  start)
-	echo "Setup persistent storage..."
-	mkdir -p /persist/seedrng
-	mkdir -p /persist/bluetooth
-	;;
-  *)
-	echo "Usage: $0 {start}"
-	exit 1
+	start)
+		echo "Setup persistent storage..."
+		mkdir -p /persist/seedrng
+		mkdir -p /persist/bluetooth
+		;;
+	*)
+		echo "Usage: $0 {start}"
+		exit 1
 esac
 
 exit $?
