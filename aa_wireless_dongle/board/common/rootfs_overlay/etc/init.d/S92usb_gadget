@@ -69,12 +69,12 @@ start() {
 }
 
 stop() {
-	printf "Disabe usb_gadgets: "
+	printf "Disable usb_gadgets: "
 	cd /sys/kernel/config/usb_gadget
 	echo "" > "$ACCESSORY_GADGET_NAME"/UDC
 	echo "" > "$DEFAULT_GADGET_NAME"/UDC
 
-	# Disabe usb_gadget:
+	# Disable usb_gadget:
 	echo "OK"
 
 	printf "Stopping $DAEMON: "
