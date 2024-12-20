@@ -26,6 +26,8 @@ In theory, this can be extended to more hardware in future with these basic requ
 ## Install and run
 [Download a pre-built sd card image](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/releases) for your board. You can also [build one yourself](BUILDING.md). Install the image on the SD card using your favorite tool.
 
+<em>Raspberri Pi Imager, seems to not work with these images. I would recommend balenaEtcher as this has been proven to work with these images.</em>
+
 You may want to update the `country_code` in the `/etc/hostapd.conf` file.
 
 ### First-time connection
