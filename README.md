@@ -26,7 +26,7 @@ In theory, this can be extended to more hardware in future with these basic requ
 ## Install and run
 [Download a pre-built sd card image](https://github.com/nisargjhaveri/WirelessAndroidAutoDongle/releases) for your board. You can also [build one yourself](BUILDING.md). Install the image on the SD card using your favorite tool.
 
-You may want to update the `country_code` in the `/etc/hostapd.conf` file.
+You may want to update the country code and other settings that works best for you. See [Configurations](#Configurations)
 
 ### First-time connection
 - Connect the phone to headunit via USB cable, make sure Android Auto starts. Disconnect phone.
@@ -42,6 +42,13 @@ From the next time, it should automatically connect to the phone and start Andro
 
 Make sure your Bluetooth and Wifi are enabled on the phone.
 
+## Configurations
+
+Once the image is installed on the SD card, you can see the SD card as `WirelessAA` drive.
+
+Edit the `aawgd.conf` file inside the `WirelessAA` drive using a text editor to update the configurations. The file contains the possible configuration options with their explanations.
+
+
 ## Troubleshoot
 
 ### Common issues
@@ -54,8 +61,9 @@ The most common issue behind this is either bad USB cable or use of wrong USB po
 ### Getting logs
 Once you've already tried multiple times and it still does not work, you can ssh into the device and try to get some logs.
 
+- Set a static password by setting the `AAWG_WIFI_PASSWORD` config. See [the instructions to update the configurations](#Configurations).
 - Connect the device to the headunit, let it boot and try to connect once. The logs are not persisted across reboots, so you need to get the logs in the same instance soon after you observe the issue.
-- Connect to the device using wifi (SSID:AAWirelessDongle, Password: ConnectAAWirelessDongle, see [hostapd.conf](aa_wireless_dongle/board/common/rootfs_overlay/etc/hostapd.conf)).
+- Connect to the device using wifi (SSID: AAWirelessDongle, Password: \<as set in the first step>).
 - SSH into the device (username: root, password: password, see relevant defconfigs e.g. [raspberrypi0w_defconfig](aa_wireless_dongle/configs/raspberrypi0w_defconfig)).
 - Once you're in, try to have a look at `/var/log/messages` file, it should have most relevant logs to start with. You can also copy the file and attach to issues you create if any.
 
