@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 
 #include "common.h"
 #include "bluetoothHandler.h"
@@ -99,8 +100,14 @@ void BluetoothHandler::setPower(bool on) {
         return;
     }
 
+    // wait up to 10 seconds if BT stack is not ready
+    int i = 10;
+    while (i-- && !m_adapter->powered->value()) {
+        sleep(1);
+    }
+
     m_adapter->powered->set_value(on);
-    Logger::instance()->info("Bluetooth adapter was powered %s\n", on ? "on" : "off");
+    Logger::instance()->info("Bluetooth adapter powered %s\n", on ? "on" : "off");
 }
 
 void BluetoothHandler::setPairable(bool pairable) {
