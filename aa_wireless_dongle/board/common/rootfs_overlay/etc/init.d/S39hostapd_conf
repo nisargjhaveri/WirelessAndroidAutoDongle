@@ -6,8 +6,8 @@
 case "$1" in
 	start)
 		if [ -z "$AAWG_CONF_SOURCED" ]; then
-			echo "Source /etc/aawgd.conf.sh"
-			source /etc/aawgd.conf.sh
+			echo "Source /etc/aawgd.conf"
+			source /etc/aawgd.conf
 		fi
 
 		echo "Generate hostapd configuration at /var/run/hostapd.conf"

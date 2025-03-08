@@ -4,7 +4,7 @@ set -u
 set -e
 set -x
 
-mv ${TARGET_DIR}/etc/aawgd.conf.sh ${BINARIES_DIR}/aawgd.conf.sh
-ln -sf /boot/aawgd.conf.sh ${TARGET_DIR}/etc/aawgd.conf.sh
+mv ${TARGET_DIR}/etc/aawgd.conf ${BINARIES_DIR}/aawgd.conf
+ln -sf /boot/aawgd.conf ${TARGET_DIR}/etc/aawgd.conf
 
 source board/raspberrypi/post-build.sh
