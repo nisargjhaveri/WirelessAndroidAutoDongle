@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ -z "$AAWG_CONF_SOURCED" ]; then
+    echo "Source /etc/aawgd.conf"
+    source /etc/aawgd.conf
+fi
+
+if [ -z "$AAWG_ENABLE_SSH" ]; then
+    echo "AAWG_ENABLE_SSH is not set. Skipping SSH setup."
+    exit
+fi

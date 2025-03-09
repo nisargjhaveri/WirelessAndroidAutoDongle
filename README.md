@@ -61,7 +61,7 @@ The most common issue behind this is either bad USB cable or use of wrong USB po
 ### Getting logs
 Once you've already tried multiple times and it still does not work, you can ssh into the device and try to get some logs.
 
-- Set a static password by setting the `AAWG_WIFI_PASSWORD` config. See [the instructions to update the configurations](#Configurations).
+- Set a static password by setting the `AAWG_WIFI_PASSWORD` config, and enable SSH by setting the `AAWG_ENABLE_SSH` config. See [the instructions to update the configurations](#Configurations).
 - Connect the device to the headunit, let it boot and try to connect once. The logs are not persisted across reboots, so you need to get the logs in the same instance soon after you observe the issue.
 - Connect to the device using wifi (SSID: AAWirelessDongle, Password: \<as set in the first step>).
 - SSH into the device (username: root, password: password, see relevant defconfigs e.g. [raspberrypi0w_defconfig](aa_wireless_dongle/configs/raspberrypi0w_defconfig)).
