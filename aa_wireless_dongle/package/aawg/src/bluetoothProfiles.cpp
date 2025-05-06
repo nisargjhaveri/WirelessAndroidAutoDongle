@@ -119,7 +119,7 @@ private:
             Logger::instance()->info("Sent %s, messageId: %d, wrote %d bytes\n", MessageName(messageId).c_str(), messageId, wrote);
         }
 
-        delete buffer;
+        delete[] buffer;
     }
 
     MessageId ReadMessage() {
@@ -147,7 +147,7 @@ private:
         unsigned char* buffer = new unsigned char[length];
         readBytes = read(m_fd, buffer, length);
 
-        delete buffer;
+        delete[] buffer;
 
         return messageId;
     }
