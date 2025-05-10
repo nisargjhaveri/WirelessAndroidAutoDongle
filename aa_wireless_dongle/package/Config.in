@@ -1,4 +1,3 @@
 menu "Packages"
     source "$BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH/package/aawg/Config.in"
-    source "$BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH/package/brcmfmac_sdio-firmware-rpi-custom/Config.in"
 endmenu
