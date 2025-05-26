@@ -1,6 +1,6 @@
-From 775e387941fa82d060d9cbb096bcf4edf3561a17 Mon Sep 17 00:00:00 2001
+From 35d7e717478266e1c2bf032e3538e036cb1f43cc Mon Sep 17 00:00:00 2001
 From: Nisarg Jhaveri <nisargjhaveri@gmail.com>
-Date: Sun, 23 Apr 2023 19:11:43 +0000
+Date: Sat, 10 May 2025 16:23:40 +0000
 Subject: [PATCH] Remove cyclic dependency between f_accessory and libcomposite
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH] Remove cyclic dependency between f_accessory and libcomposite
  2 files changed, 39 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-index d3cbcd9cfb50..327d3930ef54 100644
+index 77abfbfd2f32..8cf10d9bf05c 100644
 --- a/drivers/usb/gadget/configfs.c
 +++ b/drivers/usb/gadget/configfs.c
-@@ -16,9 +16,18 @@
+@@ -18,9 +18,18 @@
  #include <linux/usb/ch9.h>
  
  #ifdef CONFIG_USB_CONFIGFS_F_ACC
@@ -34,7 +34,7 @@ index d3cbcd9cfb50..327d3930ef54 100644
  #endif
  static struct class *android_class;
  static struct device *android_device;
-@@ -1555,7 +1564,7 @@ static int android_setup(struct usb_gadget *gadget,
+@@ -1948,7 +1957,7 @@ static int android_setup(struct usb_gadget *gadget,
  	}
  
  #ifdef CONFIG_USB_CONFIGFS_F_ACC
@@ -43,7 +43,7 @@ index d3cbcd9cfb50..327d3930ef54 100644
  		value = acc_ctrlrequest_composite(cdev, c);
  #endif
  
-@@ -1617,7 +1626,9 @@ static void configfs_composite_disconnect(struct usb_gadget *gadget)
+@@ -2010,7 +2019,9 @@ static void configfs_composite_disconnect(struct usb_gadget *gadget)
  	 * accessory function is not actually enabled,
  	 * so we need to inform it when we are disconnected.
  	 */
@@ -112,5 +112,5 @@ index ce7814c22057..8a0ff683769c 100644
 +
  MODULE_LICENSE("GPL");
 -- 
-2.17.1
+2.34.1
 
