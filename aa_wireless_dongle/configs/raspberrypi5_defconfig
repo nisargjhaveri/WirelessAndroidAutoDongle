@@ -23,7 +23,7 @@ BR2_LINUX_KERNEL_INTREE_DTS_NAME="broadcom/bcm2712-rpi-5-b"
 
 # Rootfs overlay
 BR2_ROOTFS_OVERLAY="$(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/board/common/rootfs_overlay $(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/board/raspberrypi/rootfs_overlay $(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/board/raspberrypi4/rootfs_overlay"
-BR2_GLOBAL_PATCH_DIR="board/raspberrypi/patches $(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/patches"
+BR2_GLOBAL_PATCH_DIR="$(BR2_EXTERNAL_AA_WIRELESS_DONGLE_PATH)/patches"
 BR2_DOWNLOAD_FORCE_CHECK_HASHES=y
 
 # Enable compressed kernel module support
