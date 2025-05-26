@@ -33,6 +33,11 @@ services:
     environment:
       - BOARD_NAME=raspberrypi4
 
+  rpi5:
+    <<: *generate_image
+    environment:
+      - BOARD_NAME=raspberrypi5
+
 volumes:
   dl:
   output:
