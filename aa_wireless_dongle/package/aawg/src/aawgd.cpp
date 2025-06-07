@@ -6,6 +6,7 @@
 #include "proxyHandler.h"
 #include "uevent.h"
 #include "usb.h"
+#include "webServer.h" // Added WebServer header
 
 int main(void) {
     Logger::instance()->info("AA Wireless Dongle\n");
@@ -14,6 +15,12 @@ int main(void) {
     std::optional<std::thread> ueventThread =  UeventMonitor::instance().start();
     UsbManager::instance().init();
     BluetoothHandler::instance().init();
+
+    // Initialize and start the WebServer
+    // Port 8080 is a common alternative HTTP port.
+    // The WebServer constructor attempts to start the server.
+    // Its destructor will attempt to stop it.
+    WebServer webUi(8080);
 
     ConnectionStrategy connectionStrategy = Config::instance()->getConnectionStrategy();
     if (connectionStrategy == ConnectionStrategy::DONGLE_MODE) {

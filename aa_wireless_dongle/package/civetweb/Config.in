@@ -1,0 +1,6 @@
+config BR2_PACKAGE_CIVETWEB
+    bool "civetweb"
+    help
+      A simple, embeddable web server.
+
+      https://github.com/civetweb/civetweb
