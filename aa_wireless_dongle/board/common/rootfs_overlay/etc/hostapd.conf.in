@@ -1,12 +1,9 @@
-country_code=IN
-
 ctrl_interface=/var/run/hostapd
 interface=wlan0
 
-hw_mode=a
+hw_mode=g
 ieee80211n=1
-ieee80211ac=1
-channel=36
+channel=6
 
 auth_algs=1
 wpa=2
@@ -14,4 +11,6 @@ wpa_key_mgmt=WPA-PSK
 rsn_pairwise=CCMP
 
 ssid=AAWirelessDongle
-wpa_passphrase=ConnectAAWirelessDongle
+
+#wpa_passphrase=ConnectAAWirelessDongle
+#country_code=IN

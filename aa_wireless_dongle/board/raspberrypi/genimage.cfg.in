@@ -1,0 +1,42 @@
+image boot.vfat {
+	vfat {
+		label = "WirelessAA"
+		files = {
+			"aawgd.conf",
+#BOOT_FILES#
+		}
+	}
+
+	size = 32M
+}
+
+image persist.ext4 {
+	name = "persist"
+	ext4 {
+		label = "persist"
+		use-mke2fs = true
+	}
+	size = 32M
+}
+
+
+image sdcard.img {
+	hdimage {
+	}
+
+	partition boot {
+		partition-type = 0xC
+		bootable = "true"
+		image = "boot.vfat"
+	}
+
+	partition rootfs {
+		partition-type = 0x83
+		image = "rootfs.ext4"
+	}
+
+	partition persist {
+		partition-type = 0x83
+		image = "persist.ext4"
+	}
+}

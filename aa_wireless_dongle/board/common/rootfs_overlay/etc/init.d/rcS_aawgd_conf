@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# Setup AAWG configuration
+#
+set -o allexport
+
+if [ -z "$AAWG_CONF_SOURCED" ]; then
+	echo "Source /etc/aawgd.conf"
+	source /etc/aawgd.conf
+	export AAWG_CONF_SOURCED=1
+fi
+
+
+## Setup Wifi password
+if [ -z "${AAWG_WIFI_PASSWORD}" ]; then
+	export AAWG_WIFI_PASSWORD="$(cat /dev/urandom | tr -dc 'A-Za-z0-9@#' | head -c 16)"
+fi
+
+set +o allexport

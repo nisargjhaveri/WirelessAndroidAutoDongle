@@ -4,6 +4,9 @@
 exec 1> >(logger -s -p INFO -t console 2>&1)
 exec 2> >(logger -s -p WARNING -t console)
 
+# Source aawgd configuration environment variables
+source /etc/init.d/rcS_aawgd_conf
+
 # Start all init scripts in /etc/init.d
 # executing them in numerical order.
 #

@@ -11,7 +11,14 @@ RUN apt-get -q -y install file wget cpio rsync locales \
 RUN apt-get -q -y autoremove && apt-get -q -y clean
 RUN update-locale LC_ALL=C
 
+RUN useradd -ms /bin/bash buildroot
+
+RUN mkdir -p /app/buildroot/dl && chown -R buildroot:buildroot /app/buildroot/dl
+RUN mkdir -p /app/buildroot/output && chown -R buildroot:buildroot /app/buildroot/output
+
 VOLUME /app/buildroot/dl
 VOLUME /app/buildroot/output
+
+USER buildroot
 
 CMD /bin/bash

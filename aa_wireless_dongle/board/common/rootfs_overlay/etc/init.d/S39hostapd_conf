@@ -1,0 +1,34 @@
+#!/bin/sh
+#
+# Setup hostapd configuration
+#
+
+case "$1" in
+	start)
+		if [ -z "$AAWG_CONF_SOURCED" ]; then
+			echo "Source /etc/aawgd.conf"
+			source /etc/aawgd.conf
+		fi
+
+		echo "Generate hostapd configuration at /var/run/hostapd.conf"
+
+		cp /etc/hostapd.conf.in /var/run/hostapd.conf
+
+		echo >> /var/run/hostapd.conf
+
+		# Add Wifi password
+		if [ -n "${AAWG_WIFI_PASSWORD}" ]; then
+			echo "wpa_passphrase=${AAWG_WIFI_PASSWORD}" >> /var/run/hostapd.conf
+		fi
+
+		# Add Wifi country code if set
+		if [ -n "${AAWG_COUNTRY_CODE}" ]; then
+			echo "country_code=${AAWG_COUNTRY_CODE}" >> /var/run/hostapd.conf
+		fi
+		;;
+	*)
+		echo "Usage: $0 {start}"
+		exit 1
+esac
+
+exit $?

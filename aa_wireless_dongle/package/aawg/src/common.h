@@ -29,6 +29,8 @@ public:
 
     WifiInfo getWifiInfo();
     ConnectionStrategy getConnectionStrategy();
+
+    std::string getUniqueSuffix();
 private:
     Config() = default;
 
