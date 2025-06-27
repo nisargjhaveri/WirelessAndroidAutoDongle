@@ -48,15 +48,19 @@ void UeventMonitor::monitorLoop(int nl_socket) {
         }
 
         // Call the handlers
-        for (auto it = handlers.cbegin(); it != handlers.cend(); ++it) {
+        std::lock_guard<std::mutex> lock(handlers_mutex);
+        for (auto it = handlers.begin(); it != handlers.end(); /* no increment here */) {
             if ((*it)(envMap)) {
-                it = handlers.erase(it);
+                it = handlers.erase(it); // erase returns the next valid iterator
+            } else {
+                ++it;
             }
         }
     }
 }
 
 void UeventMonitor::addHandler(std::function<bool(UeventEnv)> handler) {
+    std::lock_guard<std::mutex> lock(handlers_mutex);
     handlers.push_back(handler);
 }
 

@@ -3,6 +3,7 @@
 #include <list>
 #include <map>
 #include <functional>
+#include <mutex>
 
 typedef std::map<std::string, std::string> UeventEnv;
 
@@ -29,4 +30,5 @@ private:
     void monitorLoop(int nl_socket);
 
     std::list<std::function<bool(UeventEnv)>> handlers;
+    std::mutex handlers_mutex;
 };

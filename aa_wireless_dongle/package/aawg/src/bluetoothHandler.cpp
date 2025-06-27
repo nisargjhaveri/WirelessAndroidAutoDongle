@@ -203,7 +203,7 @@ void BluetoothHandler::connectDevice() {
         std::shared_ptr<DBus::PropertyProxy<bool>> deviceConnected = bluezDevice->create_property<bool>(INTERFACE_BLUEZ_DEVICE, "Connected");
 
         try {
-            if (deviceConnected) {
+            if (deviceConnected && deviceConnected->value()) {
                 Logger::instance()->info("Bluetooth device already connected, disconnecting\n");
                 disconnect();
             }
