@@ -33,7 +33,7 @@ You may want to update the country code and other settings that works best for y
 - Connect the board to the car. Make sure to use a data cable, with the USB OTG enabled port on the board.
     - On **Raspberry Pi Zero W** and **Raspberry Pi Zero 2 W**: Use the second micro-usb port marked "USB" and not "PWR".
     - On **Raspberry Pi 3 A+**: Use the only USB-A port with an USB-A to USB-A cable.
-    - On **Raspberry Pi 4**, use the USB-C port user for normally powering the board.
+    - On **Raspberry Pi 4**, use the USB-C port used for normally powering the board.
 - Open Bluetooth settings and pair the new device called `AndroidAuto-Dongle-*` or `WirelessAADongle-*` on your phone.
 - After this phone should automatically connect via Wifi and the dongle will connect to the headunit via USB and start Android Auto on the car screen.
 
