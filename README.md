@@ -36,6 +36,7 @@ You may want to update the country code and other settings that works best for y
     - On **Raspberry Pi 4**, use the USB-C port used for normally powering the board.
 - Open Bluetooth settings and pair the new device called `AndroidAuto-Dongle-*` or `WirelessAADongle-*` on your phone.
 - After this phone should automatically connect via Wifi and the dongle will connect to the headunit via USB and start Android Auto on the car screen.
+- If you're having trouble getting Android Auto to lanch on your headunit after you've connected Bluetooth check that "Wireless Android Auto" is enabled in your phone's Andriod Auto settings. Note: This option is only available on some older versions of Android but it's worth double checking.
 
 ### Subsequent connections
 From the next time, it should automatically connect to the phone and start Android Auto.
