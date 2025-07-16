@@ -14,7 +14,7 @@ This repository consists of the buildroot setup to generate an sd card image to 
 This is currently tested and built for the following Raspberry Pi boards supporting USB OTG.
 - **Raspberry Pi Zero W**
 - **Raspberry Pi Zero 2 W**
-- **Raspberry Pi 3 A+** _(Raspberry Pi 3 B+ is not supported)_
+- **Raspberry Pi 3 A+** _(Raspberry Pi 3 B+ is not supported due to lack of USB OTG support.)_
 - **Raspberry Pi 4**
 
 In theory, this can be extended to more hardware in future with these basic requirements.
