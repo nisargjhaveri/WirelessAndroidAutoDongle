@@ -58,6 +58,9 @@ The most common issue behind this is either bad USB cable or use of wrong USB po
 1. The cable is good quality data cable and not power-only cable
 2. You're using the OTG enabled usb port on the board, and not the power-only port.
 
+#### "Device not responding" error on headunit
+Make sure that "Wireless Android Auto" is enabled in your phone's Andriod Auto settings. This option is only available and required on some older phones.
+
 ### Getting logs
 Once you've already tried multiple times and it still does not work, you can ssh into the device and try to get some logs.
 
